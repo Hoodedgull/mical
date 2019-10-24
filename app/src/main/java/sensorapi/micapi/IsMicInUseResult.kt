@@ -1,4 +1,5 @@
 package sensorapi.micapi
 
-class IsMicInUseResult constructor(result: Boolean, appName: String)
+class IsMicInUseResult constructor(val result: Boolean, val appName: String) {
+}
 

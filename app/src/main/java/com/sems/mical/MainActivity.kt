@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import sensorapi.micapi.MicUsedImpl
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,15 +23,32 @@ class MainActivity : AppCompatActivity() {
    }
 
     public fun sendNotif(view : View){
-        var builder = NotificationCompat.Builder(this, "hello")
+        var micUsedImpl = MicUsedImpl()
+        var response = micUsedImpl.isMicBeingUsed()
+        if (response.result) {
+
+
+            var builder = NotificationCompat.Builder(this, "hello")
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
-                .setContentTitle("TEXT")
-                .setContentText("moretext")
+                .setContentTitle(response.appName)
+                .setContentText("Wants to use the mic")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
-        with(NotificationManagerCompat.from(this)) {
-            // notificationId is a unique int for each notification that you must define
-            notify(1234, builder.build())
+            with(NotificationManagerCompat.from(this)) {
+                // notificationId is a unique int for each notification that you must define
+                notify(1234, builder.build())
+            }
+        } else {
+            var builder = NotificationCompat.Builder(this, "hello")
+                .setSmallIcon(R.drawable.ic_stat_onesignal_default)
+                .setContentTitle("Safe")
+                .setContentText("Your privacy is safe")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+            with(NotificationManagerCompat.from(this)) {
+                // notificationId is a unique int for each notification that you must define
+                notify(1234, builder.build())
+            }
         }
 
     }
