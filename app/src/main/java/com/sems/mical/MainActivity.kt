@@ -1,8 +1,11 @@
 package com.sems.mical
 
+import android.app.Notification.EXTRA_NOTIFICATION_ID
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -28,11 +31,23 @@ class MainActivity : AppCompatActivity() {
         if (response.result) {
 
 
-            var builder = NotificationCompat.Builder(this, "hello")
+
+        val acceptIntent = Intent(this, AcceptAppBroadcastReciever::class.java).apply {
+            action = "what is an action"
+            putExtra(EXTRA_NOTIFICATION_ID, 0)
+        }
+
+
+        val acceptPendingIntent: PendingIntent =
+                PendingIntent.getBroadcast(this, 0, acceptIntent, 0)
+
+
+        var builder = NotificationCompat.Builder(this, "hello")
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
                 .setContentTitle(response.appName)
                 .setContentText("Wants to use the mic")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .addAction(R.drawable.ic_stat_onesignal_default,"actiontitle", acceptPendingIntent);
 
             with(NotificationManagerCompat.from(this)) {
                 // notificationId is a unique int for each notification that you must define
@@ -52,6 +67,8 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+
 
 
 
