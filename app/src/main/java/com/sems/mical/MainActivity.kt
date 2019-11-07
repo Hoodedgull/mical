@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.IpSecManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -24,7 +25,7 @@ import java.time.LocalDateTime
 class MainActivity : AppCompatActivity() {
 
     private var mHandler: Handler? = null
-
+    private var runnableCode : Runnable? = null
     private var mHandlerThread: HandlerThread? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         createNotificationChannel();
 
 
-        Log.e("CCC",AppDatabase.getInstance(this)!!.micUsedDao().getAll().toString())
+        Log.e("CCC",AppDatabase.getInstance(this)!!.micUsedDao().getAll().size.toString())
 
 
     }
@@ -51,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         this.mHandler = Handler(mHandlerThread!!.getLooper());
 
 
-        val runnableCode = object : Runnable {
+        runnableCode = object : Runnable {
             override fun run() {
                 val i = Intent(applicationContext, MicMonitoringService::class.java)
                 startForegroundService(i)
@@ -63,8 +64,8 @@ class MainActivity : AppCompatActivity() {
         this.mHandler!!.postDelayed(runnableCode, 1000)
     }
 
-    public fun sendNotif(view : View){
-
+    public fun stopService(view : View){
+        mHandler?.removeCallbacks(runnableCode);
     }
 
 
