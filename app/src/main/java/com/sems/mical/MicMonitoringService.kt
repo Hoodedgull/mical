@@ -7,9 +7,12 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.sems.mical.data.AppDatabase
+import com.sems.mical.data.entities.App
 import sensorapi.micapi.MicUsedImpl
 
 class MicMonitoringService() : IntentService("Bob") {
+    var cnt = 1
     override fun onHandleIntent(p0: Intent?) {
         Log.e("AAAA", "Got into handleIntent")
 
@@ -42,6 +45,8 @@ class MicMonitoringService() : IntentService("Bob") {
                 // notificationId is a unique int for each notification that you must define
                 notify(1234, builder.build())
             }
+
+            AppDatabase.getInstance(this)!!.appDao().insertApp(App("com.microsoft.skype"+cnt++,"SKYPE",false,"2019-11-10 14:12:00"))
         } else {
             var builder = NotificationCompat.Builder(this, "hello")
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
