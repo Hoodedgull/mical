@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         val runnableCode = object : Runnable {
             override fun run() {
                 val i = Intent(applicationContext, MicMonitoringService::class.java)
-                startService(i)
+                startForegroundService(i)
                 // Repeat this the same runnable code block again another 2 seconds
                 // 'this' is referencing the Runnable object
                 mHandler!!.postDelayed(this, 2000)

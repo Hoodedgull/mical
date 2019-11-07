@@ -21,12 +21,12 @@ class MicMonitoringService() : IntentService("Bob") {
 
             val acceptIntent = Intent(this, AcceptAppBroadcastReciever::class.java).apply {
                 action = "what is an action"
-                putExtra(Notification.EXTRA_NOTIFICATION_ID, 0)
+                putExtra(Notification.EXTRA_NOTIFICATION_ID, 123456789)
             }
 
 
             val acceptPendingIntent: PendingIntent =
-                PendingIntent.getBroadcast(this, 0, acceptIntent, 0)
+                PendingIntent.getBroadcast(this, 123, acceptIntent, 0)
 
 
             var builder = NotificationCompat.Builder(this, "hello")
@@ -34,7 +34,9 @@ class MicMonitoringService() : IntentService("Bob") {
                 .setContentTitle(response.appName)
                 .setContentText("Wants to use the mic")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .addAction(R.drawable.ic_stat_onesignal_default,"actiontitle", acceptPendingIntent);
+                .addAction(R.drawable.ic_stat_onesignal_default,"accept", acceptPendingIntent);
+
+            startForeground(123456789,builder.build())
 
             with(NotificationManagerCompat.from(this)) {
                 // notificationId is a unique int for each notification that you must define
@@ -45,13 +47,12 @@ class MicMonitoringService() : IntentService("Bob") {
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
                 .setContentTitle("Safe")
                 .setContentText("Your privacy is safe")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
 
-            with(NotificationManagerCompat.from(this)) {
-                // notificationId is a unique int for each notification that you must define
-                notify(1234, builder.build())
-            }
-        }
+
+            startForeground(123456789,builder.build())
+
+           }
 
     }
 }
