@@ -5,9 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.sems.mical.data.daos.AppDao
+import com.sems.mical.data.daos.MicUsedDao
 import com.sems.mical.data.entities.App
+import com.sems.mical.data.entities.MicrophoneIsBeingUsed
 
-@Database(entities = [App::class],exportSchema = false,version = 1)
+@Database(entities = [App::class, MicrophoneIsBeingUsed::class],exportSchema = false,version = 2)
 abstract class AppDatabase : RoomDatabase() {
     companion object {
     val DB_NAME = "App_Db"
@@ -18,6 +20,7 @@ abstract class AppDatabase : RoomDatabase() {
            if(instance == null){
                instance = Room.databaseBuilder(ctx.applicationContext, AppDatabase::class.java,DB_NAME )
                    .fallbackToDestructiveMigration()
+                   .allowMainThreadQueries()
                    .build()
            }
            return instance;
@@ -25,5 +28,6 @@ abstract class AppDatabase : RoomDatabase() {
     }
 
     abstract fun appDao() : AppDao ;
+    abstract fun micUsedDao() : MicUsedDao ;
 }
 

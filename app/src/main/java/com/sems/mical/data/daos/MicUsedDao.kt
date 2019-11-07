@@ -2,19 +2,20 @@ package com.sems.mical.data.daos
 
 import androidx.room.*
 import com.sems.mical.data.entities.App
+import com.sems.mical.data.entities.MicrophoneIsBeingUsed
 
 @Dao
-interface AppDao {
+interface MicUsedDao {
 
-    @Query("SELECT * FROM App")
-    fun getApps() : List<App>
+    @Query("SELECT * FROM MicrophoneIsBeingUsed")
+    fun getAll() : List<MicrophoneIsBeingUsed>
 
     @Insert
-    fun insertApp(app:App)
+    fun insert(app:MicrophoneIsBeingUsed)
 
     @Update
-    fun updateApp(app:App)
+    fun update(app:MicrophoneIsBeingUsed)
 
     @Delete
-    fun deleteApp(app:App)
+    fun delete(app:MicrophoneIsBeingUsed)
 }

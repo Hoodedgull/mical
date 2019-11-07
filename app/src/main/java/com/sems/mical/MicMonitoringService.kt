@@ -9,7 +9,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.sems.mical.data.AppDatabase
 import com.sems.mical.data.entities.App
+import com.sems.mical.data.entities.MicrophoneIsBeingUsed
 import sensorapi.micapi.MicUsedImpl
+import java.time.LocalDateTime
 
 class MicMonitoringService() : IntentService("Bob") {
     var cnt = 1
@@ -46,7 +48,7 @@ class MicMonitoringService() : IntentService("Bob") {
                 notify(1234, builder.build())
             }
 
-            AppDatabase.getInstance(this)!!.appDao().insertApp(App("com.microsoft.skype"+cnt++,"SKYPE",false,"2019-11-10 14:12:00"))
+            AppDatabase.getInstance(this)!!.micUsedDao().insert(MicrophoneIsBeingUsed(response.appName,LocalDateTime.now().toString()))
         } else {
             var builder = NotificationCompat.Builder(this, "hello")
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)

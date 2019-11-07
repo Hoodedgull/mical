@@ -10,11 +10,15 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.sems.mical.data.AppDatabase
+import com.sems.mical.data.entities.MicrophoneIsBeingUsed
 import sensorapi.micapi.MicUsedImpl
+import java.time.LocalDateTime
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,7 +33,11 @@ class MainActivity : AppCompatActivity() {
 
         createNotificationChannel();
 
-   }
+
+        Log.e("CCC",AppDatabase.getInstance(this)!!.micUsedDao().getAll().toString())
+
+
+    }
 
     fun startAService(view: View){
 
