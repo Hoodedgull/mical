@@ -36,7 +36,7 @@ class MicMonitoringService() : IntentService("Bob") {
                 putExtra("action", "accept");
                 putExtra("appname", response.appName);
                 sendBroadcast(this)
-            } b
+            } 
 
 
 
