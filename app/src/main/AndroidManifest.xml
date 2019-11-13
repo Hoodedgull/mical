@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -22,6 +24,11 @@
         </activity>
 
         <service android:name=".MicMonitoringService" />
+        <receiver android:name=".AcceptAppBroadcastReciever">
+            <intent-filter>
+                <action android:name="com.sems.mical.micallow"></action>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
