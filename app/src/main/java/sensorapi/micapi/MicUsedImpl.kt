@@ -8,7 +8,7 @@ class MicUsedImpl : MicAlerterInterface {
         if (chance > 20){
             return IsMicInUseResult(false, "");
         } else {
-            return IsMicInUseResult(true, "Skype")
+            return IsMicInUseResult(true, "Facebook")
         }
     }
 }

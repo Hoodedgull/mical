@@ -35,9 +35,6 @@ class MainActivity : AppCompatActivity() {
         createNotificationChannel();
 
 
-        Log.e("CCC",AppDatabase.getInstance(this)!!.micUsedDao().getAll().size.toString())
-
-
     }
 
     fun startAService(view: View){
@@ -45,6 +42,11 @@ class MainActivity : AppCompatActivity() {
         scheduleAlarm()
     }
 
+    fun viewMicUsage(view:View){
+
+        val intent = Intent(this,ViewUseActivity::class.java)
+        startActivity(intent)
+    }
     // Setup a recurring alarm every half hour
     fun scheduleAlarm() {
         this.mHandlerThread = HandlerThread("HandlerThread");
