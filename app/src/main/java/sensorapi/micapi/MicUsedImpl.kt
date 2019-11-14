@@ -10,7 +10,7 @@ class MicUsedImpl : MicAlerterInterface {
         } else if (chance > 15){
             IsMicInUseResult(true,"Skype")}
         else{
-            IsMicInUseResult(true, "Facebook")
+            IsMicInUseResult(true, "YouTube")
         }
     }
 }
