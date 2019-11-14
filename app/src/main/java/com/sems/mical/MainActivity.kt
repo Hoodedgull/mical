@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
         AppDatabase.getInstance(this)!!.appDao().deleteApp(app)
         }
 
-        var apps = AppDatabase.getInstance(this)!!.appDao().getApps()
         createNotificationChannel();
 
 
