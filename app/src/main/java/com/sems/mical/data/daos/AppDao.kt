@@ -17,4 +17,7 @@ interface AppDao {
 
     @Delete
     fun deleteApp(app:App)
+
+    @Query("SELECT * FROM App WHERE displayName == :name")
+    fun getAppByName(name: String): List<App>
 }

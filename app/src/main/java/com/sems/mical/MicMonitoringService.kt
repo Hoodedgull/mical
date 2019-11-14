@@ -109,7 +109,8 @@ class MicMonitoringService() : Service() {
                 .setContentText("Wants to use the mic")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .addAction(R.drawable.ic_stat_onesignal_default, "Accept",acceptPendingIntent)
-                .addAction(R.drawable.ic_stat_onesignal_default, "Decline", declinePendingIntent);
+                .addAction(R.drawable.ic_stat_onesignal_default, "Decline", declinePendingIntent)
+                .setAutoCancel(true)
 
 
 

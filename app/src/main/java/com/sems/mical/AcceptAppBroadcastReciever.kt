@@ -21,46 +21,47 @@ import java.time.format.DateTimeFormatter
 
 
 class AcceptAppBroadcastReciever : BroadcastReceiver() {
-    private var count = 38;
+
     override fun onReceive(p0: Context?, p1: Intent?) {
         Log.e("BBBB", "I AM RECEIVED")
         val action = p1?.getStringExtra("action")
+        val appName = p1?.getStringExtra("appname")!!
         if (action == "accept") {
-            acceptRequest(p0, p1)
-            val toast = Toast.makeText(
-                p0?.applicationContext,
-                "This is a message displayed in an accepted Toast",
-                Toast.LENGTH_SHORT
-            )
 
-            toast.show()
+            handleRequest(p0, appName, true)
+            Toast.makeText(
+                p0?.applicationContext,
+                "${appName} has been allowed access to the mic",
+                Toast.LENGTH_SHORT
+            ).show()
 
             Log.e("BBBB", "ACCEPTED APPPPPPPPPP")
         } else if (action == "decline") {
-            declineRequest(p0, p1)
-            val toast = Toast.makeText(
+            handleRequest(p0, appName, false)
+            Toast.makeText(
                 p0?.applicationContext,
-                "This is a message displayed in a declined Toast",
+                "${appName} has not been allowed access to the mic",
                 Toast.LENGTH_SHORT
-            )
-
-            toast.show()
+            ).show()
 
             Log.e("BBBB", "DECLINED!!! APPPPPPPPPP")
+        }
+
+        with(NotificationManagerCompat.from(p0!!)) {
+            // notificationId is a unique int for each notification that you must define
+            cancel(123456789)
         }
 
         val apps = AppDatabase.getInstance(p0!!)!!.appDao().getApps();
         Log.e("HELP", apps.size.toString())
     }
 
-    private fun acceptRequest(p0: Context?, p1: Intent?){
-        val appName = p1!!.getStringExtra("appname")
-        AppDatabase.getInstance(p0!!)!!.appDao().insertApp(App(appName, LocalDateTime.now().toString(), true, LocalDateTime.now().toString()))
-    }
-
-    private fun declineRequest(p0: Context?, p1: Intent?){
-        val appName = p1!!.getStringExtra("appname")
-        AppDatabase.getInstance(p0!!)!!.appDao().insertApp(App(appName, LocalDateTime.now().toString(), false, LocalDateTime.now().toString()))
+    private fun handleRequest(p0: Context?, appName: String, permission: Boolean){
+        Log.e("BBBB", "I AM DB")
+        var dbInstance = AppDatabase.getInstance(p0!!)!!.appDao()
+        if (dbInstance.getAppByName(appName).isEmpty() ){
+            dbInstance.insertApp(App(appName, appName, permission, LocalDateTime.now().toString()))
+        }
     }
 
 
