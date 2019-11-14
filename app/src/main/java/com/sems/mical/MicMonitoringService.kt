@@ -22,20 +22,21 @@ class MicMonitoringService() : IntentService("Bob") {
 
     var cnt = 1
     override fun onHandleIntent(p0: Intent?) {
-        Log.e("AAAA", "Got into handleIntent")
+        //Log.e("AAAA", "Got into handleIntent")
 
         var micUsedImpl = MicUsedImpl()
         var response = micUsedImpl.isMicBeingUsed()
         if (response.result) {
 
 
+            Log.e("AAAA", "Result!")
 
             val acceptIntent = Intent(this, AcceptAppBroadcastReciever::class.java).apply {
                 action = "com.sems.mical.micallow"
                 putExtra(Notification.EXTRA_NOTIFICATION_ID, 123456789)
                 putExtra("action", "accept");
                 putExtra("appname", response.appName);
-                sendBroadcast(this)
+
             } 
 
 
@@ -48,7 +49,6 @@ class MicMonitoringService() : IntentService("Bob") {
                 putExtra(Notification.EXTRA_NOTIFICATION_ID, 123456789)
                 putExtra("action", "decline");
                 putExtra("appname", response.appName);
-                sendBroadcast(this)
             }
 
 
@@ -66,7 +66,14 @@ class MicMonitoringService() : IntentService("Bob") {
                 .addAction(R.drawable.ic_stat_onesignal_default, "Accept",acceptPendingIntent)
                 .addAction(R.drawable.ic_stat_onesignal_default, "Decline", declinePendingIntent);
 
-            startForeground(123456789,builder.build())
+
+            var foregroundbuilder = NotificationCompat.Builder(this, "hello")
+                .setSmallIcon(R.drawable.ic_stat_onesignal_default)
+                .setContentTitle("Safe")
+                .setContentText("Your privacy is safe")
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+
+            startForeground(123456789,foregroundbuilder.build())
 
             with(NotificationManagerCompat.from(this)) {
                 // notificationId is a unique int for each notification that you must define

@@ -30,8 +30,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        for(app in AppDatabase.getInstance(this)!!.appDao().getApps()){
 
+        AppDatabase.getInstance(this)!!.appDao().deleteApp(app)
+        }
 
+        var apps = AppDatabase.getInstance(this)!!.appDao().getApps()
         createNotificationChannel();
 
 
