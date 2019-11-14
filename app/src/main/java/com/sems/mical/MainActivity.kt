@@ -1,25 +1,16 @@
 package com.sems.mical
 
-import android.app.Notification.EXTRA_NOTIFICATION_ID
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.net.IpSecManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.sems.mical.data.AppDatabase
-import com.sems.mical.data.entities.MicrophoneIsBeingUsed
-import sensorapi.micapi.MicUsedImpl
-import java.time.LocalDateTime
 
 
 class MainActivity : AppCompatActivity() {
@@ -43,8 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     fun startAService(view: View){
 
-        scheduleAlarm()
-    }
+        startForegroundService(Intent(this, MicMonitoringService::class.java))    }
 
     fun viewMicUsage(view:View){
 
@@ -71,8 +61,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     public fun stopService(view : View){
-        mHandler?.removeCallbacks(runnableCode);
-    }
+        stopService(Intent(this, MicMonitoringService::class.java))    }
 
 
 

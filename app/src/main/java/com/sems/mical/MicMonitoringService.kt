@@ -3,26 +3,71 @@ package com.sems.mical
 import android.app.IntentService
 import android.app.Notification
 import android.app.PendingIntent
-import android.content.Context
+import android.app.Service
 import android.content.Intent
+import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.room.Room
 import com.sems.mical.data.AppDatabase
-import com.sems.mical.data.entities.App
 import com.sems.mical.data.entities.MicrophoneIsBeingUsed
 import sensorapi.micapi.MicUsedImpl
 import java.time.LocalDateTime
+import android.widget.Toast
+import java.util.*
 
-class MicMonitoringService() : IntentService("Bob") {
+
+class MicMonitoringService() : Service() {
+    override fun onBind(p0: Intent?): IBinder? {
+        return null;
+    }
+
+
     companion object {
         val context = this
     }
 
+    var timer:Timer? = null
+    var task: TimerTask? = null
+    override fun onCreate() {
+        super.onCreate();
+        val delay:Long = 1000 // delay for 1 sec.
+        val period = 1000L // repeat every sec.
+        Log.e("HHHHHH", "How often do we go here2?")
+
+
+        var foregroundbuilder = NotificationCompat.Builder(this, "hello")
+            .setSmallIcon(R.drawable.ic_stat_onesignal_default)
+            .setContentTitle("Safe")
+            .setContentText("Your privacy is safe")
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+        startForeground(123456789,foregroundbuilder.build())
+
+
+
+        timer = Timer()
+
+        task = object : TimerTask() {
+            override fun run() {
+                Log.e("HHHHHH", "How often do we go here3?")
+
+            monitorMic();
+            }
+        }
+
+        timer!!.scheduleAtFixedRate(task, delay, period)
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timer?.cancel();
+        task?.cancel();
+    }
+
     var cnt = 1
-    override fun onHandleIntent(p0: Intent?) {
-        //Log.e("AAAA", "Got into handleIntent")
+     fun monitorMic() {
+        Log.e("AAAA", "Got into handleIntent")
 
         var micUsedImpl = MicUsedImpl()
         var response = micUsedImpl.isMicBeingUsed()
@@ -67,13 +112,8 @@ class MicMonitoringService() : IntentService("Bob") {
                 .addAction(R.drawable.ic_stat_onesignal_default, "Decline", declinePendingIntent);
 
 
-            var foregroundbuilder = NotificationCompat.Builder(this, "hello")
-                .setSmallIcon(R.drawable.ic_stat_onesignal_default)
-                .setContentTitle("Safe")
-                .setContentText("Your privacy is safe")
-                .setPriority(NotificationCompat.PRIORITY_LOW)
 
-            startForeground(123456789,foregroundbuilder.build())
+
 
             with(NotificationManagerCompat.from(this)) {
                 // notificationId is a unique int for each notification that you must define
@@ -81,17 +121,7 @@ class MicMonitoringService() : IntentService("Bob") {
             }
 
             AppDatabase.getInstance(this)!!.micUsedDao().insert(MicrophoneIsBeingUsed(response.appName,LocalDateTime.now().toString()))
-        } else {
-            var builder = NotificationCompat.Builder(this, "hello")
-                .setSmallIcon(R.drawable.ic_stat_onesignal_default)
-                .setContentTitle("Safe")
-                .setContentText("Your privacy is safe")
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-
-
-            startForeground(123456789,builder.build())
-
-           }
+        }
 
     }
 }
