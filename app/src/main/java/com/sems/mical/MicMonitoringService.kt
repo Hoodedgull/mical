@@ -27,21 +27,21 @@ class MicMonitoringService() : Service() {
         val context = this
     }
 
+    var notifCount = 1;
+
     var timer:Timer? = null
     var task: TimerTask? = null
     override fun onCreate() {
         super.onCreate();
         val delay:Long = 1000 // delay for 1 sec.
         val period = 1000L // repeat every sec.
-        Log.e("HHHHHH", "How often do we go here2?")
-
 
         var foregroundbuilder = NotificationCompat.Builder(this, "hello")
             .setSmallIcon(R.drawable.ic_stat_onesignal_default)
             .setContentTitle("Safe")
             .setContentText("Your privacy is safe")
             .setPriority(NotificationCompat.PRIORITY_LOW)
-        startForeground(123456789,foregroundbuilder.build())
+        startForeground(notifCount++,foregroundbuilder.build())
 
 
 
@@ -49,8 +49,6 @@ class MicMonitoringService() : Service() {
 
         task = object : TimerTask() {
             override fun run() {
-                Log.e("HHHHHH", "How often do we go here3?")
-
             monitorMic();
             }
         }
@@ -78,7 +76,7 @@ class MicMonitoringService() : Service() {
 
             val acceptIntent = Intent(this, AcceptAppBroadcastReciever::class.java).apply {
                 action = "com.sems.mical.micallow"
-                putExtra(Notification.EXTRA_NOTIFICATION_ID, 123456789)
+                putExtra(Notification.EXTRA_NOTIFICATION_ID, notifCount++)
                 putExtra("action", "accept");
                 putExtra("appname", response.appName);
 
@@ -87,19 +85,19 @@ class MicMonitoringService() : Service() {
 
 
             val acceptPendingIntent: PendingIntent =
-                PendingIntent.getBroadcast(this, 123, acceptIntent, 0)
+                PendingIntent.getBroadcast(this, notifCount++, acceptIntent, 0)
 
             val declineIntent = Intent(this, AcceptAppBroadcastReciever::class.java).apply {
                 action = "com.sems.mical.micallow"
-                putExtra(Notification.EXTRA_NOTIFICATION_ID, 123456789)
-                putExtra("action", "decline");
-                putExtra("appname", response.appName);
+                putExtra(Notification.EXTRA_NOTIFICATION_ID, notifCount++)
+                putExtra("action", "decline")
+                putExtra("appname", response.appName)
             }
 
 
 
             val declinePendingIntent: PendingIntent =
-                PendingIntent.getBroadcast(this, 123, declineIntent, 0)
+                PendingIntent.getBroadcast(this, notifCount++, declineIntent, 0)
 
 
 
@@ -118,7 +116,7 @@ class MicMonitoringService() : Service() {
 
             with(NotificationManagerCompat.from(this)) {
                 // notificationId is a unique int for each notification that you must define
-                notify(1234, builder.build()) 
+                notify(notifCount++, builder.build())
             }
 
             AppDatabase.getInstance(this)!!.micUsedDao().insert(MicrophoneIsBeingUsed(response.appName,LocalDateTime.now().toString()))

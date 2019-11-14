@@ -1,5 +1,6 @@
 package com.sems.mical
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
@@ -47,9 +48,10 @@ class AcceptAppBroadcastReciever : BroadcastReceiver() {
             Log.e("BBBB", "DECLINED!!! APPPPPPPPPP")
         }
 
+        var id = p1.getIntExtra(Notification.EXTRA_NOTIFICATION_ID, -1)
         with(NotificationManagerCompat.from(p0!!)) {
             // notificationId is a unique int for each notification that you must define
-            cancel(123456789)
+            cancel(id)
         }
 
         val apps = AppDatabase.getInstance(p0!!)!!.appDao().getApps();
