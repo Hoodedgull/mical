@@ -62,19 +62,22 @@ class MicMonitoringService() : Service() {
         task?.cancel();
     }
 
-    var cnt = 1
      fun monitorMic() {
-         Log.e("AAAA", "Got into handleIntent")
 
          var micUsedImpl = MicUsedImpl()
          var response = micUsedImpl.isMicBeingUsed()
+
          if (response.result) {
 
-                 Log.e("AAAA", "Result!")
+             if (AppDatabase.getInstance(this)!!.appDao().getAppByName(response.appName).isNotEmpty())
+                 return
+
+             Log.e("Service ID", response.appName.hashCode().toString())
+             Log.e("Service Name", response.appName)
 
                  val acceptIntent = Intent(this, AcceptAppBroadcastReciever::class.java).apply {
                      action = "com.sems.mical.micallow"
-                     putExtra(Notification.EXTRA_NOTIFICATION_ID, notifID)
+                     putExtra("id", response.appName.hashCode())
                      putExtra("action", "accept");
                      putExtra("appname", response.appName);
 
@@ -82,19 +85,18 @@ class MicMonitoringService() : Service() {
 
 
                  val acceptPendingIntent: PendingIntent =
-                     PendingIntent.getBroadcast(this, 123, acceptIntent, 0)
+                     PendingIntent.getBroadcast(this, 123, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                  val declineIntent = Intent(this, AcceptAppBroadcastReciever::class.java).apply {
                      action = "com.sems.mical.micdeny"
-                     putExtra(Notification.EXTRA_NOTIFICATION_ID, notifID)
+                     putExtra("id", response.appName.hashCode())
                      putExtra("action", "decline")
                      putExtra("appname", response.appName)
                  }
 
 
                  val declinePendingIntent: PendingIntent =
-                     PendingIntent.getBroadcast(this, 123, declineIntent, 0)
-
+                     PendingIntent.getBroadcast(this, 123, declineIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                  var builder = NotificationCompat.Builder(this, "hello")
                      .setSmallIcon(R.drawable.ic_stat_onesignal_default)
@@ -115,10 +117,9 @@ class MicMonitoringService() : Service() {
 
                  with(NotificationManagerCompat.from(this)) {
                      // notificationId is a unique int for each notification that you must define
-                     notify(notifID, builder.build())
+                     notify(response.appName.hashCode(), builder.build())
 
                  }
-                 notifID++
 
                  AppDatabase.getInstance(this)!!.micUsedDao().insert(
                      MicrophoneIsBeingUsed(

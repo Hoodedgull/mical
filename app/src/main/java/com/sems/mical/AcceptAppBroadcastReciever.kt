@@ -24,11 +24,15 @@ import java.time.format.DateTimeFormatter
 class AcceptAppBroadcastReciever : BroadcastReceiver() {
 
     override fun onReceive(p0: Context?, p1: Intent?) {
-        Log.e("BBBB", "I AM RECEIVED")
         val action = p1?.getStringExtra("action")
         val appName = p1?.getStringExtra("appname")!!
-        if (action == "accept") {
+        var id = p1?.getIntExtra("id", -1)
+        Log.e("Notif Name", appName.toString())
+        Log.e("Notif ID", id.toString())
+        if(appName == "Skype")
+            Log.e("Skype", "Skype")
 
+        if (action == "accept") {
             handleRequest(p0, appName, true)
             Toast.makeText(
                 p0?.applicationContext,
@@ -48,7 +52,8 @@ class AcceptAppBroadcastReciever : BroadcastReceiver() {
             Log.e("BBBB", "DECLINED!!! APPPPPPPPPP")
         }
 
-        var id = p1.getIntExtra(Notification.EXTRA_NOTIFICATION_ID, -1)
+
+
         with(NotificationManagerCompat.from(p0!!)) {
             // notificationId is a unique int for each notification that you must define
             cancel(id)
