@@ -1,15 +1,19 @@
 package com.sems.mical
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.*
 import com.sems.mical.data.AppDatabase
 
 
@@ -27,8 +31,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         createNotificationChannel();
+        checkRecordPermission()
 
 
+    }
+
+    private fun checkRecordPermission()
+    {
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            ActivityCompat.requestPermissions(
+                this,arrayOf( Manifest.permission.RECORD_AUDIO ),
+                123
+            );
+        }
     }
 
     fun startAService(view: View){
