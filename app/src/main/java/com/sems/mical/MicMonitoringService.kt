@@ -14,6 +14,7 @@ import com.sems.mical.data.entities.MicrophoneIsBeingUsed
 import sensorapi.micapi.MicUsedImpl
 import java.time.LocalDateTime
 import android.widget.Toast
+import sensorapi.micapi.PermissionListing
 import java.util.*
 
 
@@ -71,6 +72,8 @@ class MicMonitoringService() : Service() {
         var response = micUsedImpl.isMicBeingUsed()
         if (response.result) {
 
+            var permissionName = PermissionListing()
+            permissionName.getPermissionApp(this)
 
             Log.e("AAAA", "Result!")
 
