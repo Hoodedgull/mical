@@ -1,11 +1,16 @@
 package com.sems.mical
 
+import android.annotation.SuppressLint
 import android.app.IntentService
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.location.Criteria
+import android.location.Location
+import android.location.LocationManager
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -14,6 +19,8 @@ import com.sems.mical.data.entities.MicrophoneIsBeingUsed
 import sensorapi.micapi.MicUsedImpl
 import java.time.LocalDateTime
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.sems.mical.data.LocationUpdateIntentService
 import sensorapi.micapi.PermissionListing
 import java.util.*
 
@@ -64,43 +71,89 @@ class MicMonitoringService() : Service() {
         task?.cancel();
     }
 
+    fun getLocation(): Location?{
+
+        var lo: Location? = null
+        val locationManager = getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager;
+
+        val criteria = Criteria()
+
+        criteria.accuracy = Criteria.ACCURACY_FINE
+        criteria.isAltitudeRequired = false
+        criteria.isBearingRequired = false
+        criteria.isSpeedRequired = false
+
+        try{
+            val provider = locationManager.getBestProvider(criteria,true)
+
+
+            if (Looper.myLooper() == null)
+            {
+                Looper.prepare();
+            }
+
+            if(provider != null){
+
+                locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
+                    LocationUpdateIntentService(),null)
+                lo= locationManager.getLastKnownLocation(provider)
+            }else{
+                lo = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+
+
+            }
+        }catch(Ex:SecurityException){
+
+        }
+
+        return lo
+    }
+
     var cnt = 1
      fun monitorMic() {
         Log.e("AAAA", "Got into handleIntent")
 
         var micUsedImpl = MicUsedImpl()
         var response = micUsedImpl.isMicBeingUsed()
-        if (response.result) {
+        if (response.result||true) {
 
             var permissionName = PermissionListing()
             permissionName.getPermissionApp(this)
 
             Log.e("AAAA", "Result!")
+            var locationUser = getLocation()!!
+
+
+
 
             val acceptIntent = Intent(this, AcceptAppBroadcastReciever::class.java).apply {
                 action = "com.sems.mical.micallow"
                 putExtra(Notification.EXTRA_NOTIFICATION_ID, notifCount++)
                 putExtra("action", "accept");
                 putExtra("appname", response.appName);
+                putExtra("latitude",locationUser.latitude);
+                putExtra("longitude",locationUser.longitude);
 
             } 
 
 
 
             val acceptPendingIntent: PendingIntent =
-                PendingIntent.getBroadcast(this, notifCount++, acceptIntent, 0)
+                PendingIntent.getBroadcast(this, notifCount, acceptIntent, 0)
 
             val declineIntent = Intent(this, AcceptAppBroadcastReciever::class.java).apply {
                 action = "com.sems.mical.micallow"
-                putExtra(Notification.EXTRA_NOTIFICATION_ID, notifCount++)
+                putExtra(Notification.EXTRA_NOTIFICATION_ID, notifCount)
                 putExtra("action", "decline")
                 putExtra("appname", response.appName)
+                putExtra("latitude",locationUser.latitude);
+                putExtra("longitude",locationUser.longitude);
             }
 
 
 
             val declinePendingIntent: PendingIntent =
-                PendingIntent.getBroadcast(this, notifCount++, declineIntent, 0)
+                PendingIntent.getBroadcast(this, notifCount, declineIntent, 0)
 
 
 
@@ -119,7 +172,7 @@ class MicMonitoringService() : Service() {
 
             with(NotificationManagerCompat.from(this)) {
                 // notificationId is a unique int for each notification that you must define
-                notify(notifCount++, builder.build())
+                notify(notifCount, builder.build())
             }
 
             AppDatabase.getInstance(this)!!.micUsedDao().insert(MicrophoneIsBeingUsed(response.appName,LocalDateTime.now().toString()))

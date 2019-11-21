@@ -9,7 +9,7 @@ import com.sems.mical.data.daos.MicUsedDao
 import com.sems.mical.data.entities.App
 import com.sems.mical.data.entities.MicrophoneIsBeingUsed
 
-@Database(entities = [App::class, MicrophoneIsBeingUsed::class],exportSchema = false,version = 2)
+@Database(entities = [App::class, MicrophoneIsBeingUsed::class],exportSchema = false,version = 3)
 abstract class AppDatabase : RoomDatabase() {
     companion object {
     val DB_NAME = "App_Db"

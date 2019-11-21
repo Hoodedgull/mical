@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.Build
 import android.util.Log
 import android.view.View
@@ -27,9 +28,11 @@ class AcceptAppBroadcastReciever : BroadcastReceiver() {
         Log.e("BBBB", "I AM RECEIVED")
         val action = p1?.getStringExtra("action")
         val appName = p1?.getStringExtra("appname")!!
+        val latitude = p1?.getDoubleExtra("latitude", -1.0)
+        val longitude = p1?.getDoubleExtra("longitude", -1.0)
         if (action == "accept") {
 
-            handleRequest(p0, appName, true)
+            handleRequest(p0, appName, true,latitude, longitude)
             Toast.makeText(
                 p0?.applicationContext,
                 "${appName} has been allowed access to the mic",
@@ -38,7 +41,7 @@ class AcceptAppBroadcastReciever : BroadcastReceiver() {
 
             Log.e("BBBB", "ACCEPTED APPPPPPPPPP")
         } else if (action == "decline") {
-            handleRequest(p0, appName, false)
+            handleRequest(p0, appName, false, latitude, longitude)
             Toast.makeText(
                 p0?.applicationContext,
                 "${appName} has not been allowed access to the mic",
@@ -58,11 +61,11 @@ class AcceptAppBroadcastReciever : BroadcastReceiver() {
         Log.e("HELP", apps.size.toString())
     }
 
-    private fun handleRequest(p0: Context?, appName: String, permission: Boolean){
-        Log.e("BBBB", "I AM DB")
+    private fun handleRequest(p0: Context?, appName: String, permission: Boolean, latitude: Double, longitude: Double){
+        Log.e("BBBB", "Location: ${latitude}")
         var dbInstance = AppDatabase.getInstance(p0!!)!!.appDao()
         if (dbInstance.getAppByName(appName).isEmpty() ){
-            dbInstance.insertApp(App(appName, appName, permission, LocalDateTime.now().toString()))
+            dbInstance.insertApp(App(appName, appName, permission, LocalDateTime.now().toString(), latitude, longitude))
         }
     }
 

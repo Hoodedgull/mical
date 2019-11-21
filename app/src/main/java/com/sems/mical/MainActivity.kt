@@ -1,19 +1,19 @@
 package com.sems.mical
 
 import android.Manifest
+import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
+import android.os.*
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.*
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.listener.single.BasePermissionListener
 import com.sems.mical.data.AppDatabase
 
 
@@ -34,6 +34,11 @@ class MainActivity : AppCompatActivity() {
         checkRecordPermission()
 
 
+
+        Dexter.withActivity(this)
+            .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+            .withListener(BasePermissionListener()).check()
+        Dexter.withActivity(this).withPermission(ACCESS_BACKGROUND_LOCATION).withListener(BasePermissionListener()).check()
     }
 
     private fun checkRecordPermission()
@@ -72,10 +77,10 @@ class MainActivity : AppCompatActivity() {
                 startForegroundService(i)
                 // Repeat this the same runnable code block again another 2 seconds
                 // 'this' is referencing the Runnable object
-                mHandler!!.postDelayed(this, 2000)
+                mHandler!!.postDelayed(this, 6000)
             }
         }
-        this.mHandler!!.postDelayed(runnableCode, 1000)
+        this.mHandler!!.postDelayed(runnableCode, 5000)
     }
 
     public fun stopService(view : View){
