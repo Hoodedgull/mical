@@ -15,6 +15,14 @@ import androidx.core.content.ContextCompat.*
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.listener.single.BasePermissionListener
 import com.sems.mical.data.AppDatabase
+import android.net.Uri.fromParts
+import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+import androidx.core.app.ComponentActivity
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.net.Uri
+import android.provider.Settings
 
 
 class MainActivity : AppCompatActivity() {
@@ -84,6 +92,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     public fun stopService(view : View){
+
+
         stopService(Intent(this, MicMonitoringService::class.java))    }
 
 

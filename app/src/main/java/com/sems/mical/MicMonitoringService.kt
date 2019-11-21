@@ -9,8 +9,10 @@ import android.content.Intent
 import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
+import android.net.Uri
 import android.os.IBinder
 import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -124,6 +126,14 @@ class MicMonitoringService() : Service() {
             var locationUser = getLocation()!!
 
 
+            // location is in a bad place
+            if(true){
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                val uri = Uri.fromParts("package", packageName, null)
+                intent.setData(uri)
+                startActivity(intent)
+            }
 
 
             val acceptIntent = Intent(this, AcceptAppBroadcastReciever::class.java).apply {
