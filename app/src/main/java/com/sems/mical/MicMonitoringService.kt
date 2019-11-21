@@ -118,7 +118,7 @@ class MicMonitoringService() : Service() {
         if (response.result||true) {
 
             var permissionName = PermissionListing()
-            permissionName.getPermissionApp(this)
+            val appName = permissionName.getPermissionApp(this)
 
             Log.e("AAAA", "Result!")
             var locationUser = getLocation()!!
@@ -159,7 +159,7 @@ class MicMonitoringService() : Service() {
 
             var builder = NotificationCompat.Builder(this, "hello")
                 .setSmallIcon(R.drawable.ic_stat_onesignal_default)
-                .setContentTitle(response.appName)
+                .setContentTitle(appName)
                 .setContentText("Wants to use the mic")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .addAction(R.drawable.ic_stat_onesignal_default, "Accept",acceptPendingIntent)
@@ -175,7 +175,7 @@ class MicMonitoringService() : Service() {
                 notify(notifCount, builder.build())
             }
 
-            AppDatabase.getInstance(this)!!.micUsedDao().insert(MicrophoneIsBeingUsed(response.appName,LocalDateTime.now().toString()))
+            AppDatabase.getInstance(this)!!.micUsedDao().insert(MicrophoneIsBeingUsed(appName,LocalDateTime.now().toString()))
         }
 
     }
