@@ -25,6 +25,8 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
     }
 
     private fun handleEvent(event: GeofencingEvent) {
+        Log.e("NNNN", "WE CANnot send notfi, but we are handlign event!")
+
         // 1
         if (event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
             // 2

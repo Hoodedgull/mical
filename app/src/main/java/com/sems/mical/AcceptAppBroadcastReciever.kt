@@ -1,24 +1,17 @@
 package com.sems.mical
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.location.Location
-import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import android.widget.Toast
+import com.google.android.gms.maps.model.LatLng
 import com.sems.mical.data.AppDatabase
 import com.sems.mical.data.entities.App
 import com.sems.mical.data.entities.Fence
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import kotlin.Result.Companion.failure
-import kotlin.Result.Companion.success
 
 
 class AcceptAppBroadcastReciever : BroadcastReceiver() {
@@ -40,7 +33,8 @@ class AcceptAppBroadcastReciever : BroadcastReceiver() {
                 Toast.LENGTH_SHORT
             ).show()
 
-
+            val reminder = Reminder(getUniqueId().toString(), LatLng(latitude,longitude),200.0,"TEST")
+            (p0?.applicationContext as MicalApp).getRepository().add(reminder,null, null);
 
 
             Log.e("BBBB", "ACCEPTED APPPPPPPPPP")
