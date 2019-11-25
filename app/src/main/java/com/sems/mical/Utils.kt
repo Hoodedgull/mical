@@ -44,4 +44,4 @@ fun sendNotification(context: Context, message: String, latLng: LatLng) {
     notificationManager.notify(getUniqueId(), notification)
 }
 
-private fun getUniqueId() = ((System.currentTimeMillis() % 10000).toInt())
+public fun getUniqueId() = ((System.currentTimeMillis() % 10000).toInt())

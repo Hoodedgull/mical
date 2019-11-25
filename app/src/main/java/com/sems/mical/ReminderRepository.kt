@@ -60,9 +60,11 @@ class ReminderRepository(private val context: Context) {
         PendingIntent.FLAG_UPDATE_CURRENT)
   }
 
-  fun add(reminder: Reminder,
-          success: () -> Unit,
-          failure: (error: String) -> Unit) {
+  fun add(
+      reminder: Reminder,
+      success: (() -> Unit)?,
+      failure: ((error: String) -> Unit)?
+  ) {
     // 1
     val geofence = buildGeofence(reminder)
     if (geofence != null
@@ -75,11 +77,15 @@ class ReminderRepository(private val context: Context) {
           .addOnSuccessListener {
             // 3
             saveAll(getAll() + reminder)
-            success()
+              if (success != null) {
+                  success()
+              }
           }
           .addOnFailureListener {
             // 4
-            failure(GeofenceErrorMessages.getErrorString(context, it))
+              if (failure != null) {
+                  failure(GeofenceErrorMessages.getErrorString(context, it))
+              }
           }
     }
   }

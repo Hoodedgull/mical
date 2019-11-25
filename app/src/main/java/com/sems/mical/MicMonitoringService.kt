@@ -122,7 +122,7 @@ class MicMonitoringService() : Service() {
             val appName = permissionName.getPermissionApp(this)
 
             Log.e("AAAA", "Result!")
-            var locationUser = getLocation()!!
+            var locationUser = getLocation()
 
 
             // location is in a bad place
@@ -140,8 +140,8 @@ class MicMonitoringService() : Service() {
                 putExtra(Notification.EXTRA_NOTIFICATION_ID, notifCount++)
                 putExtra("action", "accept");
                 putExtra("appname", response.appName);
-                putExtra("latitude",locationUser.latitude);
-                putExtra("longitude",locationUser.longitude);
+                putExtra("latitude",locationUser?.latitude);
+                putExtra("longitude",locationUser?.longitude);
 
             } 
 
@@ -155,8 +155,8 @@ class MicMonitoringService() : Service() {
                 putExtra(Notification.EXTRA_NOTIFICATION_ID, notifCount)
                 putExtra("action", "decline")
                 putExtra("appname", response.appName)
-                putExtra("latitude",locationUser.latitude);
-                putExtra("longitude",locationUser.longitude);
+                putExtra("latitude",locationUser?.latitude);
+                putExtra("longitude",locationUser?.longitude);
             }
 
 
