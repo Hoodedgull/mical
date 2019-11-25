@@ -132,7 +132,7 @@ class MicMonitoringService() : Service() {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 val uri = Uri.fromParts("package", packageName, null)
                 intent.setData(uri)
-                startActivity(intent)
+                //startActivity(intent)
             }
 
 
@@ -170,7 +170,7 @@ class MicMonitoringService() : Service() {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .addAction(R.drawable.ic_stat_onesignal_default, "Accept",acceptPendingIntent)
                 .addAction(R.drawable.ic_stat_onesignal_default, "Decline", declinePendingIntent)
-                .setAutoCancel(true)
+                //.setAutoCancel(true)
 
 
                  with(NotificationManagerCompat.from(this)) {
