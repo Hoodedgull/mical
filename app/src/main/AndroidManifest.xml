@@ -36,6 +36,7 @@
         <receiver android:name=".AcceptAppBroadcastReciever">
             <intent-filter>
                 <action android:name="com.sems.mical.micallow"></action>
+                <action android:name="com.sems.mical.micdeny"></action>
             </intent-filter>
         </receiver>
         <receiver
