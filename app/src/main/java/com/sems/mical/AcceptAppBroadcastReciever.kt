@@ -10,18 +10,11 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.util.Log
-import android.view.View
-import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.ContextCompat.getSystemService
 import android.widget.Toast
-import com.google.android.gms.location.Geofence
-import com.google.android.gms.location.GeofencingRequest
-import com.google.android.gms.location.LocationServices
 import com.sems.mical.data.AppDatabase
 import com.sems.mical.data.entities.App
-import com.sems.mical.data.entities.MicrophoneIsBeingUsed
+import com.sems.mical.data.entities.Fence
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.Result.Companion.failure
@@ -31,18 +24,19 @@ import kotlin.Result.Companion.success
 class AcceptAppBroadcastReciever : BroadcastReceiver() {
 
     override fun onReceive(p0: Context?, p1: Intent?) {
-        val action = p1?.getStringExtra("action")
-        val appName = p1?.getStringExtra("appname")!!
+        val action = p1?.getStringExtra("action")!!
         val latitude = p1?.getDoubleExtra("latitude", -1.0)
         val longitude = p1?.getDoubleExtra("longitude", -1.0)
+        val radius = p1?.getDoubleExtra("radius", -1.0)
+        val id = p1?.getIntExtra("id", -1)
 
 
         if (action == "accept") {
 
-            handleRequest(p0, appName, true, latitude, longitude)
+            handleRequest(p0, "", latitude, longitude, radius, true)
             Toast.makeText(
                 p0?.applicationContext,
-                "${appName} has been allowed access to the mic",
+                "Mic access has been allowed in this location",
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -51,10 +45,10 @@ class AcceptAppBroadcastReciever : BroadcastReceiver() {
 
             Log.e("BBBB", "ACCEPTED APPPPPPPPPP")
         } else if (action == "decline") {
-            handleRequest(p0, appName, false, latitude, longitude)
+            handleRequest(p0, "", latitude, longitude, radius, false)
             Toast.makeText(
                 p0?.applicationContext,
-                "${appName} has not been allowed access to the mic",
+                "Mic access has been revoked in this location",
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -68,30 +62,15 @@ class AcceptAppBroadcastReciever : BroadcastReceiver() {
             cancel(id)
         }
 
-        val apps = AppDatabase.getInstance(p0!!)!!.appDao().getApps();
+        val apps = AppDatabase.getInstance(p0!!)!!.fenceDao().getId();
         Log.e("HELP", apps.size.toString())
     }
 
-    private fun handleRequest(
-        p0: Context?,
-        appName: String,
-        permission: Boolean,
-        latitude: Double,
-        longitude: Double
-    ) {
-        Log.e("BBBB", "Location: ${latitude}")
-        var dbInstance = AppDatabase.getInstance(p0!!)!!.appDao()
-        if (dbInstance.getAppByName(appName).isEmpty()) {
-            dbInstance.insertApp(
-                App(
-                    appName,
-                    appName,
-                    permission,
-                    LocalDateTime.now().toString(),
-                    latitude,
-                    longitude
-                )
-            )
+    private fun handleRequest(p0: Context?, id: String, lat: Double, long: Double, radius: Double, permission: Boolean){
+        Log.e("BBBB", "I AM DB")
+        var dbInstance = AppDatabase.getInstance(p0!!)!!.fenceDao()
+        if (dbInstance.getFenceById(id).isEmpty() ){
+            dbInstance.insertId(Fence(id, lat, long, radius, permission, LocalDateTime.now().toString()))
         }
     }
 }
