@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.net.Uri
 import android.provider.Settings
+import com.google.android.gms.maps.model.LatLng
 
 
 class MainActivity : AppCompatActivity() {
@@ -47,6 +48,19 @@ class MainActivity : AppCompatActivity() {
             .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
             .withListener(BasePermissionListener()).check()
         Dexter.withActivity(this).withPermission(ACCESS_BACKGROUND_LOCATION).withListener(BasePermissionListener()).check()
+    }
+
+
+    companion object {
+        private const val MY_LOCATION_REQUEST_CODE = 329
+        private const val NEW_REMINDER_REQUEST_CODE = 330
+        private const val EXTRA_LAT_LNG = "EXTRA_LAT_LNG"
+
+        fun newIntent(context: Context, latLng: LatLng): Intent {
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra(EXTRA_LAT_LNG, latLng)
+            return intent
+        }
     }
 
     private fun checkRecordPermission()

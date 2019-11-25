@@ -5,6 +5,7 @@ import android.app.IntentService
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.location.Criteria
 import android.location.Location
@@ -33,9 +34,7 @@ class MicMonitoringService() : Service() {
     }
 
 
-    companion object {
-        val context = this
-    }
+
 
     var notifCount = 1;
 
