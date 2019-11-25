@@ -1,16 +1,29 @@
 package com.sems.mical
 
+import android.Manifest
+import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
+import android.content.pm.PackageManager
+import android.os.*
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.*
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.listener.single.BasePermissionListener
 import com.sems.mical.data.AppDatabase
+import android.net.Uri.fromParts
+import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+import androidx.core.app.ComponentActivity
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.net.Uri
+import android.provider.Settings
+import com.google.android.gms.maps.model.LatLng
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,8 +40,41 @@ class MainActivity : AppCompatActivity() {
         }
 
         createNotificationChannel();
+        checkRecordPermission()
 
 
+
+        Dexter.withActivity(this)
+            .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+            .withListener(BasePermissionListener()).check()
+        Dexter.withActivity(this).withPermission(ACCESS_BACKGROUND_LOCATION).withListener(BasePermissionListener()).check()
+    }
+
+
+    companion object {
+        private const val MY_LOCATION_REQUEST_CODE = 329
+        private const val NEW_REMINDER_REQUEST_CODE = 330
+        private const val EXTRA_LAT_LNG = "EXTRA_LAT_LNG"
+
+        fun newIntent(context: Context, latLng: LatLng): Intent {
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra(EXTRA_LAT_LNG, latLng)
+            return intent
+        }
+    }
+
+    private fun checkRecordPermission()
+    {
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            ActivityCompat.requestPermissions(
+                this,arrayOf( Manifest.permission.RECORD_AUDIO ),
+                123
+            );
+        }
     }
 
     fun startAService(view: View){
@@ -53,13 +99,15 @@ class MainActivity : AppCompatActivity() {
                 startForegroundService(i)
                 // Repeat this the same runnable code block again another 2 seconds
                 // 'this' is referencing the Runnable object
-                mHandler!!.postDelayed(this, 2000)
+                mHandler!!.postDelayed(this, 6000)
             }
         }
-        this.mHandler!!.postDelayed(runnableCode, 1000)
+        this.mHandler!!.postDelayed(runnableCode, 5000)
     }
 
     public fun stopService(view : View){
+
+
         stopService(Intent(this, MicMonitoringService::class.java))    }
 
 
