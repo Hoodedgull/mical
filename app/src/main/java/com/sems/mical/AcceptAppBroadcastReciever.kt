@@ -7,6 +7,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import android.widget.Toast
+import com.google.android.gms.maps.model.LatLng
 import com.sems.mical.data.AppDatabase
 import com.sems.mical.data.entities.App
 import com.sems.mical.data.entities.Fence

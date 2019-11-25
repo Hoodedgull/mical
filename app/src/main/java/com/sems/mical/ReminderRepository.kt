@@ -106,7 +106,7 @@ class ReminderRepository(private val context: Context) {
               longitude,
               radius.toFloat()
           )
-          .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+          .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
           .setExpirationDuration(Geofence.NEVER_EXPIRE)
           .build()
     }
