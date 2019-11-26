@@ -37,7 +37,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
                 // 3
                sendNotification(this, message, latLng)
                 MicMonitoringService.fenceID = reminder.id
-               Log.e("NNNN", "WE CANnot send notfi, but we are handlign event!")
+               Log.e("NNNN", "WE CANnot send enter notfi, but we are handlign event!")
             }
         } else if(event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){
             val reminder = getFirstReminder(event.triggeringGeofences)
@@ -47,7 +47,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
                 // 3
                 sendNotification(this, message, latLng)
                 MicMonitoringService.fenceID = "none"
-                Log.e("NNNN", "WE CANnot send notfi, but we are handlign event!")
+                Log.e("NNNN", "WE CANnot send exit notfi, but we are handlign event!")
             }
         }else {
             val reminder = getFirstReminder(event.triggeringGeofences)

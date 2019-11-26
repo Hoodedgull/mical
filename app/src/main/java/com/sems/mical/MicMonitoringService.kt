@@ -123,7 +123,7 @@ class MicMonitoringService() : Service() {
             var permissionName = PermissionListing()
             val appName = permissionName.getPermissionApp(this)
             Log.e("fenceID",fenceID)
-            if (fenceID == "null") {
+            //if (fenceID == "null") {
                 if (AppDatabase.getInstance(this)!!.fenceDao().getFenceById(response.appName).isNotEmpty())
                     return
 
@@ -202,7 +202,7 @@ class MicMonitoringService() : Service() {
                 AppDatabase.getInstance(this)!!.micUsedDao()
                     .insert(MicrophoneIsBeingUsed("", LocalDateTime.now().toString()))
             }
-        }
+        //}
 
     }
 }
