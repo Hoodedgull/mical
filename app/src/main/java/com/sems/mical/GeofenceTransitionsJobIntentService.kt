@@ -36,6 +36,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
             if (message != null && latLng != null) {
                 // 3
                sendNotification(this, message, latLng)
+                MicMonitoringService.fenceID = reminder.id
                Log.e("NNNN", "WE CANnot send notfi, but we are handlign event!")
             }
         } else if(event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){
@@ -45,6 +46,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
             if (message != null && latLng != null) {
                 // 3
                 sendNotification(this, message, latLng)
+                MicMonitoringService.fenceID = "none"
                 Log.e("NNNN", "WE CANnot send notfi, but we are handlign event!")
             }
         }else {

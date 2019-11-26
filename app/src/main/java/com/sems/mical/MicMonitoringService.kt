@@ -30,7 +30,11 @@ import java.util.*
 
 class MicMonitoringService() : Service() {
     override fun onBind(p0: Intent?): IBinder? {
-        return null;
+        return null
+    }
+
+    companion object currentGeoFence{
+        var fenceID = ""
     }
 
 
@@ -110,7 +114,6 @@ class MicMonitoringService() : Service() {
         return lo
     }
 
-    var cnt = 1
      fun monitorMic() {
 
         var micUsedImpl = MicUsedImpl()
@@ -119,80 +122,86 @@ class MicMonitoringService() : Service() {
 
             var permissionName = PermissionListing()
             val appName = permissionName.getPermissionApp(this)
-
-             if (AppDatabase.getInstance(this)!!.fenceDao().getFenceById(response.appName).isNotEmpty())
-                 return
-
-
-            var locationUser = getLocation()
-
-            // location is in a bad place
-            if(true){
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                val uri = Uri.fromParts("package", packageName, null)
-                intent.setData(uri)
-                //startActivity(intent)
-            }
+            Log.e("fenceID",fenceID)
+            if (fenceID == "null") {
+                if (AppDatabase.getInstance(this)!!.fenceDao().getFenceById(response.appName).isNotEmpty())
+                    return
 
 
-            val acceptIntent = Intent(this, AcceptAppBroadcastReciever::class.java).apply {
-                action = "com.sems.mical.micallow"
-                putExtra("id", notifId)
-                putExtra("action", "accept");
-                putExtra("appname", response.appName);
-                putExtra("latitude", locationUser?.latitude);
-                putExtra("longitude", locationUser?.longitude);
-            }
+                var locationUser = getLocation()
+
+                // location is in a bad place
+                if (true) {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    val uri = Uri.fromParts("package", packageName, null)
+                    intent.setData(uri)
+                    //startActivity(intent)
+                }
 
 
-            val acceptPendingIntent: PendingIntent =
-                PendingIntent.getBroadcast(this, 123, acceptIntent, 0)
-
-            val declineIntent = Intent(this, AcceptAppBroadcastReciever::class.java).apply {
-                action = "com.sems.mical.micallow"
-                putExtra("id", notifId)
-                putExtra("action", "decline")
-                putExtra("appname", response.appName)
-                putExtra("latitude",locationUser?.latitude);
-                putExtra("longitude",locationUser?.longitude);
-            }
-
-            val declinePendingIntent: PendingIntent =
-                PendingIntent.getBroadcast(this, 124, declineIntent, 0)
+                val acceptIntent = Intent(this, AcceptAppBroadcastReciever::class.java).apply {
+                    action = "com.sems.mical.micallow"
+                    putExtra("id", notifId)
+                    putExtra("action", "accept");
+                    putExtra("appname", response.appName);
+                    putExtra("latitude", locationUser?.latitude);
+                    putExtra("longitude", locationUser?.longitude);
+                }
 
 
+                val acceptPendingIntent: PendingIntent =
+                    PendingIntent.getBroadcast(this, 123, acceptIntent, 0)
 
-            var builder = NotificationCompat.Builder(this, "hello")
-                .setSmallIcon(R.drawable.ic_stat_onesignal_default)
-                .setContentTitle(appName)
-                .setContentText("Wants to use the mic")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .addAction(R.drawable.ic_stat_onesignal_default, "Accept",acceptPendingIntent)
-                .addAction(R.drawable.ic_stat_onesignal_default, "Decline", declinePendingIntent)
+                val declineIntent = Intent(this, AcceptAppBroadcastReciever::class.java).apply {
+                    action = "com.sems.mical.micallow"
+                    putExtra("id", notifId)
+                    putExtra("action", "decline")
+                    putExtra("appname", response.appName)
+                    putExtra("latitude", locationUser?.latitude);
+                    putExtra("longitude", locationUser?.longitude);
+                }
+
+                val declinePendingIntent: PendingIntent =
+                    PendingIntent.getBroadcast(this, 124, declineIntent, 0)
+
+
+                var builder = NotificationCompat.Builder(this, "hello")
+                    .setSmallIcon(R.drawable.ic_stat_onesignal_default)
+                    .setContentTitle(appName)
+                    .setContentText("Wants to use the mic")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .addAction(R.drawable.ic_stat_onesignal_default, "Accept", acceptPendingIntent)
+                    .addAction(
+                        R.drawable.ic_stat_onesignal_default,
+                        "Decline",
+                        declinePendingIntent
+                    )
                 //.setAutoCancel(true)
 
 
-                 with(NotificationManagerCompat.from(this)) {
-                     // notificationId is a unique int for each notification that you must define
-                     notify(response.appName.hashCode(), builder.build())
+                with(NotificationManagerCompat.from(this)) {
+                    // notificationId is a unique int for each notification that you must define
+                    notify(response.appName.hashCode(), builder.build())
 
-                 }
+                }
 
-                 AppDatabase.getInstance(this)!!.micUsedDao().insert(
-                     MicrophoneIsBeingUsed(
-                         response.appName,
-                         LocalDateTime.now().toString()
-                     )
-                 )
+                AppDatabase.getInstance(this)!!.micUsedDao().insert(
+                    MicrophoneIsBeingUsed(
+                        response.appName,
+                        LocalDateTime.now().toString()
+                    )
+                )
 
 
-            with(NotificationManagerCompat.from(this)) {
-                // notificationId is a unique int for each notification that you must define
-                notify(notifId, builder.build())
+                with(NotificationManagerCompat.from(this)) {
+                    // notificationId is a unique int for each notification that you must define
+                    notify(notifId, builder.build())
+                }
+
+                AppDatabase.getInstance(this)!!.micUsedDao()
+                    .insert(MicrophoneIsBeingUsed("", LocalDateTime.now().toString()))
             }
-
-            AppDatabase.getInstance(this)!!.micUsedDao().insert(MicrophoneIsBeingUsed("",LocalDateTime.now().toString()))
         }
 
     }
