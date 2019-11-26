@@ -118,6 +118,7 @@ class MicMonitoringService() : Service() {
 
         var micUsedImpl = MicUsedImpl()
         var response = micUsedImpl.isMicBeingUsed()
+         Log.e("fenceID",fenceID)
         if (response.result) {
 
             var permissionName = PermissionListing()
@@ -126,7 +127,6 @@ class MicMonitoringService() : Service() {
             //if (fenceID == "null") {
                 if (AppDatabase.getInstance(this)!!.fenceDao().getFenceById(response.appName).isNotEmpty())
                     return
-
 
                 var locationUser = getLocation()
 
