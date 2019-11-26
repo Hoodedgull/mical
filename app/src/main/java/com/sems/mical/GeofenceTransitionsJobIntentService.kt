@@ -35,8 +35,8 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
             val latLng = reminder?.latLng
             if (message != null && latLng != null) {
                 // 3
-              //  sendNotification(this, message, latLng)
-                Log.e("NNNN", "WE CANnot send notfi, but we are handlign event!")
+               sendNotification(this, message, latLng)
+               Log.e("NNNN", "WE CANnot send notfi, but we are handlign event!")
             }
         }
     }

@@ -5,12 +5,68 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
+import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Build
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
-import com.google.android.gms.maps.model.LatLng
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.*
 
 private const val NOTIFICATION_CHANNEL_ID = BuildConfig.APPLICATION_ID + ".channel"
 
+
+
+fun EditText.requestFocusWithKeyboard() {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+    if (!hasFocus()) {
+        requestFocus()
+    }
+
+    post { imm.showSoftInput(this, InputMethodManager.SHOW_FORCED) }
+}
+
+fun hideKeyboard(context: Context, view: View) {
+    val keyboard = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    keyboard.hideSoftInputFromWindow(view.windowToken, 0)
+}
+
+fun vectorToBitmap(resources: Resources, @DrawableRes id: Int): BitmapDescriptor {
+    val vectorDrawable = ResourcesCompat.getDrawable(resources, id, null)
+    val bitmap = Bitmap.createBitmap(vectorDrawable!!.intrinsicWidth,
+        vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    vectorDrawable.setBounds(0, 0, canvas.width, canvas.height)
+    vectorDrawable.draw(canvas)
+    return BitmapDescriptorFactory.fromBitmap(bitmap)
+}
+
+fun showReminderInMap(context: Context,
+                      map: GoogleMap,
+                      reminder: Reminder) {
+    if (reminder.latLng != null) {
+        val latLng = reminder.latLng as LatLng
+        val vectorToBitmap = vectorToBitmap(context.resources, R.drawable.ic_twotone_location_on_48px)
+        val marker = map.addMarker(MarkerOptions().position(latLng).icon(vectorToBitmap))
+        marker.tag = reminder.id
+        if (reminder.radius != null) {
+            val radius = reminder.radius as Double
+            map.addCircle(
+                CircleOptions()
+                    .center(reminder.latLng)
+                    .radius(radius)
+                    .strokeColor(ContextCompat.getColor(context, R.color.colorAccent))
+                    .fillColor(ContextCompat.getColor(context, R.color.colorReminderFill)))
+        }
+    }
+}
 
 fun sendNotification(context: Context, message: String, latLng: LatLng) {
     val notificationManager = context
