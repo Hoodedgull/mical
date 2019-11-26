@@ -11,18 +11,9 @@ import android.os.*
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.*
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.listener.single.BasePermissionListener
 import com.sems.mical.data.AppDatabase
-import android.net.Uri.fromParts
-import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-import androidx.core.app.ComponentActivity
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import android.net.Uri
-import android.provider.Settings
 import com.google.android.gms.maps.model.LatLng
 
 
@@ -84,6 +75,12 @@ class MainActivity : AppCompatActivity() {
     fun viewMicUsage(view:View){
 
         val intent = Intent(this,ViewUseActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun viewGeoFences(view:View){
+
+        val intent = Intent(this,ViewGeoFenceActivity::class.java)
         startActivity(intent)
     }
     // Setup a recurring alarm every half hour

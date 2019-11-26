@@ -115,7 +115,7 @@ class MicMonitoringService() : Service() {
 
         var micUsedImpl = MicUsedImpl()
         var response = micUsedImpl.isMicBeingUsed()
-        if (response.result||true) {
+        if (response.result) {
 
             var permissionName = PermissionListing()
             val appName = permissionName.getPermissionApp(this)
