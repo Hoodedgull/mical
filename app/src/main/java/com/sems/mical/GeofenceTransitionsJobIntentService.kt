@@ -31,12 +31,30 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
         if (event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
             // 2
             val reminder = getFirstReminder(event.triggeringGeofences)
-            val message = reminder?.message
+            val message = "ENTER:" + reminder?.message
             val latLng = reminder?.latLng
             if (message != null && latLng != null) {
                 // 3
                sendNotification(this, message, latLng)
                Log.e("NNNN", "WE CANnot send notfi, but we are handlign event!")
+            }
+        } else if(event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){
+            val reminder = getFirstReminder(event.triggeringGeofences)
+            val message = "Exit:" + reminder?.message
+            val latLng = reminder?.latLng
+            if (message != null && latLng != null) {
+                // 3
+                sendNotification(this, message, latLng)
+                Log.e("NNNN", "WE CANnot send notfi, but we are handlign event!")
+            }
+        }else {
+            val reminder = getFirstReminder(event.triggeringGeofences)
+            val message =  "DWELLL" + reminder?.message
+            val latLng = reminder?.latLng
+            if (message != null && latLng != null) {
+                // 3
+                sendNotification(this, message, latLng)
+                Log.e("NNNN", "WE CANnot send notfi, but we are handlign event!")
             }
         }
     }
