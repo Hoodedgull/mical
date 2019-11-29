@@ -1,6 +1,5 @@
 package com.sems.mical
 
-import android.app.Notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -9,7 +8,6 @@ import androidx.core.app.NotificationManagerCompat
 import android.widget.Toast
 import com.google.android.gms.maps.model.LatLng
 import com.sems.mical.data.AppDatabase
-import com.sems.mical.data.entities.App
 import com.sems.mical.data.entities.Fence
 import java.time.LocalDateTime
 
@@ -18,7 +16,6 @@ class AcceptAppBroadcastReciever : BroadcastReceiver() {
 
     override fun onReceive(p0: Context?, p1: Intent?) {
         val action = p1?.getStringExtra("action")!!
-        val fenceName = p1?.getStringExtra("fenceName")
         val latitude = p1?.getDoubleExtra("latitude", -1.0)
         val longitude = p1?.getDoubleExtra("longitude", -1.0)
         val radius = p1?.getDoubleExtra("radius", -1.0)
@@ -26,7 +23,6 @@ class AcceptAppBroadcastReciever : BroadcastReceiver() {
 
         val string = p0?.getString(R.string.accept_button_in_the_notification_text)
         if (action == string) {
-
             handleRequest(p0, "", latitude, longitude, radius, true)
             Toast.makeText(
                 p0?.applicationContext,

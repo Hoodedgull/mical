@@ -29,15 +29,13 @@ class MicMonitoringService() : Service() {
     }
 
 
-
-
     var notifId = 10101;
 
-    var timer:Timer? = null
+    var timer: Timer? = null
     var task: TimerTask? = null
     override fun onCreate() {
         super.onCreate();
-        val delay:Long = 1000 // delay for 1 sec.
+        val delay: Long = 1000 // delay for 1 sec.
         val period = 1000L // repeat every sec.
 
         var foregroundbuilder = NotificationCompat.Builder(this, "hello")
@@ -45,7 +43,7 @@ class MicMonitoringService() : Service() {
             .setContentTitle("Safe")
             .setContentText("Your privacy is safe")
             .setPriority(NotificationCompat.PRIORITY_LOW)
-        startForeground(8,foregroundbuilder.build())
+        startForeground(8, foregroundbuilder.build())
 
 
 
@@ -53,7 +51,7 @@ class MicMonitoringService() : Service() {
 
         task = object : TimerTask() {
             override fun run() {
-            monitorMic();
+                monitorMic();
             }
         }
 
@@ -67,102 +65,140 @@ class MicMonitoringService() : Service() {
         task?.cancel();
     }
 
-    fun getLocation(): Location?{
+    fun getLocation(): Location? {
 
         var bestLocation: Location? = null
-        val locationManager = getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager;
+        val locationManager =
+            getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager;
 
 
-        try{
+        try {
 
-            if (Looper.myLooper() == null)
-            {
+            if (Looper.myLooper() == null) {
                 Looper.prepare();
             }
 
 
-                locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
-                    LocationUpdateIntentService(),null)
-                bestLocation= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            locationManager.requestSingleUpdate(
+                LocationManager.GPS_PROVIDER,
+                LocationUpdateIntentService(), null
+            )
+            bestLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
 
 
-                locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, LocationUpdateIntentService(), null)
-                val newLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            locationManager.requestSingleUpdate(
+                LocationManager.NETWORK_PROVIDER,
+                LocationUpdateIntentService(),
+                null
+            )
+            val newLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
             // if more recent = more better
-                if(newLocation.time > bestLocation.time){
-                    bestLocation = newLocation
-                }
+            if (newLocation != null) {
+            if (newLocation.time > bestLocation.time) {
+                bestLocation = newLocation
+            }
+        }
 
 
-
-        }catch(Ex:SecurityException){
+        } catch (Ex: SecurityException) {
 
         }
 
         return bestLocation
     }
 
-     fun monitorMic() {
+    fun monitorMic() {
 
         var micUsedImpl = MicUsedImpl()
         var response = micUsedImpl.isMicBeingUsed()
         if (response.result) {
 
-            var permissionName = PermissionListing()
-            val appName = permissionName.getPermissionApp(this)
-
-            if (AppDatabase.getInstance(this)!!.geoFenceDao().getAll().size > 0) {
-                var geoFenceTitle = AppDatabase.getInstance(this)!!.geoFenceDao().getAll().first().title
+            if (isInsideGeoFence()) {
+                var geoFence = getGeoFence()
+                var geoFenceTitle = geoFence.title
                 Log.e("FenceTitle", geoFenceTitle)
+
+                if (geoFence.accepted!!)
+                    return
+
+                // Inside no-mic zone.
+                if (!AppDatabase.getInstance(this)!!.micUsedDao().getAll().isEmpty()){
+                    val micCounterObject = AppDatabase.getInstance(this)!!.micUsedDao().getAllByFenceName(geoFenceTitle.toString()).first()
+
+                    if (micCounterObject.count != null){
+                        micCounterObject.count++
+                    } else {
+                        micCounterObject.count = 1
+                    }
+
+                    AppDatabase.getInstance(this)!!.micUsedDao().update(micCounterObject)
+                } else {
+                    var obj = MicrophoneIsBeingUsed(geoFenceTitle.toString())
+                    obj.count = 1
+                    AppDatabase.getInstance(this)!!.micUsedDao().insert(obj)
+                }
+
+
+
+            } else {
 
                 var locationUser = getLocation()
 
-                // location is in a bad place
-                if (true) {
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    val uri = Uri.fromParts("package", packageName, null)
-                    intent.setData(uri)
-                    //startActivity(intent)
-                }
-
-                val lat =  locationUser?.latitude
-            val long = locationUser?.longitude
-            val latLong = lat?.let { long?.let { it1 -> LatLng(it, it1) } }
+                val lat = locationUser?.latitude
+                val long = locationUser?.longitude
+                val latLong = lat?.let { long?.let { it1 -> LatLng(it, it1) } }
                 val acceptIntent = Intent(this, AddGeofenceActivity::class.java).apply {
                     action = "com.sems.mical.micallow"
                     putExtra("id", notifId)
-                    putExtra("fenceName", geoFenceTitle);
                     putExtra("latitude", locationUser?.latitude);
                     putExtra("longitude", locationUser?.longitude);
                     putExtra("EXTRA_LAT_LNG", latLong);
-                    putExtra("action", applicationContext.getString(R.string.accept_button_in_the_notification_text));
+                    putExtra(
+                        "action",
+                        applicationContext.getString(R.string.accept_button_in_the_notification_text)
+                    )
                 }
 
 
                 val acceptPendingIntent: PendingIntent =
-                    PendingIntent.getActivity(this, 123, acceptIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+                    PendingIntent.getActivity(
+                        this,
+                        123,
+                        acceptIntent,
+                        PendingIntent.FLAG_CANCEL_CURRENT
+                    )
 
                 val declineIntent = Intent(this, AddGeofenceActivity::class.java).apply {
                     action = "com.sems.mical.micallow"
                     putExtra("id", notifId)
-                    putExtra("fenceName", geoFenceTitle)
-                    putExtra("action", applicationContext.getString(R.string.notok_button_in_the_notification_text))
+                    putExtra(
+                        "action",
+                        applicationContext.getString(R.string.notok_button_in_the_notification_text)
+                    )
                     putExtra("latitude", locationUser?.latitude);
                     putExtra("longitude", locationUser?.longitude);
                 }
 
                 val declinePendingIntent: PendingIntent =
-                    PendingIntent.getActivity(this, 124, declineIntent,  PendingIntent.FLAG_CANCEL_CURRENT)
+                    PendingIntent.getActivity(
+                        this,
+                        124,
+                        declineIntent,
+                        PendingIntent.FLAG_CANCEL_CURRENT
+                    )
 
 
                 var builder = NotificationCompat.Builder(this, "hello")
                     .setSmallIcon(R.drawable.ic_stat_onesignal_default)
-                    .setContentTitle(appName)
+                    .setContentTitle("Mic Is Recording")
                     .setContentText("Wants to use the mic")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .addAction(R.drawable.ic_stat_onesignal_default, applicationContext.getString(R.string.accept_button_in_the_notification_text), acceptPendingIntent)
+                    .addAction(
+                        R.drawable.ic_stat_onesignal_default,
+                        applicationContext.getString(R.string.accept_button_in_the_notification_text),
+                        acceptPendingIntent
+                    )
                     .addAction(
                         R.drawable.ic_stat_onesignal_default,
                         applicationContext.getString(R.string.notok_button_in_the_notification_text),
@@ -170,24 +206,19 @@ class MicMonitoringService() : Service() {
                     )
                 //.setAutoCancel(true)
 
-                AppDatabase.getInstance(this)!!.micUsedDao().insert(
-                    MicrophoneIsBeingUsed(
-                        response.appName,
-                        LocalDateTime.now().toString()
-                    )
-                )
-
 
                 with(NotificationManagerCompat.from(this)) {
                     // notificationId is a unique int for each notification that you must define
                     notify(notifId, builder.build())
                 }
-
-                AppDatabase.getInstance(this)!!.micUsedDao()
-                    .insert(MicrophoneIsBeingUsed("", LocalDateTime.now().toString()))
             }
 
 
+        }
     }
-         }
+
+    private fun getGeoFence() =
+        AppDatabase.getInstance(this)!!.geoFenceDao().getAll().first()
+
+    private fun isInsideGeoFence() = AppDatabase.getInstance(this)!!.geoFenceDao().getAll().size > 0
 }

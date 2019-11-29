@@ -11,4 +11,5 @@ import java.util.*
 class GeoFence(
     @PrimaryKey(autoGenerate = false)
     var id: String = "",
-    var title: String = "")
+    var title: String? = "",
+    var accepted: Boolean? = false)

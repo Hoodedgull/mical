@@ -36,7 +36,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
             if (message != null && latLng != null) {
                 // 3
                 sendNotification(this, message, latLng)
-                AppDatabase.getInstance(this)!!.geoFenceDao().insertFence(GeoFence(reminder.id, reminder.title.toString()))
+                AppDatabase.getInstance(this)!!.geoFenceDao().insertFence(GeoFence(reminder.id, reminder.title, reminder.allowed))
                 Log.e("Add", AppDatabase.getInstance(this)!!.geoFenceDao().getAll().size.toString())
             }
         } else if(event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){

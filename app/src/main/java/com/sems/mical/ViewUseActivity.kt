@@ -67,7 +67,7 @@ class ViewUseActivity : AppCompatActivity() {
 
 
         val usageResults = AppDatabase.getInstance(this)?.micUsedDao()?.getAll()
-        val distinctAppNames = usageResults?.map { r -> r.appFullName }?.distinct()
+        val distinctAppNames = usageResults?.map { r -> r.fenceName }?.distinct()
 
 
         //Set label count to 5 as we are displaying 5 star rating
@@ -95,14 +95,14 @@ class ViewUseActivity : AppCompatActivity() {
      */
     private fun setGraphData(
         usageResults: List<MicrophoneIsBeingUsed>?,
-        distinctAppNames: Array<String>
+        distinctFenceNames: Array<String>
     ) {
 
         //Add a list of bar entries
         val entries = ArrayList<BarEntry>()
         if (usageResults != null) {
-            for (i in (distinctAppNames.indices)){
-                entries.add(BarEntry(i.toFloat(), usageResults.filter({e-> e.appFullName.equals(distinctAppNames[i])}).count().toFloat()))
+            for (i in (distinctFenceNames.indices)){
+                entries.add(BarEntry(i.toFloat(), usageResults.filter({e-> e.fenceName.equals(distinctFenceNames[i])}).count().toFloat()))
             }
         }
 

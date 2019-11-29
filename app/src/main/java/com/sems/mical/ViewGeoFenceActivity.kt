@@ -139,19 +139,25 @@ class ViewGeoFenceActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMar
       currentLocation.setOnClickListener {
         val bestProvider = locationManager.getBestProvider(Criteria(), false)
         var bestLocation = locationManager.getLastKnownLocation(bestProvider)
-        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
-          LocationUpdateIntentService(),null)
-        var newLocation= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-        if(newLocation.time > bestLocation.time){
+        locationManager.requestSingleUpdate(
+          LocationManager.GPS_PROVIDER,
+          LocationUpdateIntentService(), null
+        )
+        var newLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        if (newLocation != null) {
+        if (newLocation.time > bestLocation.time) {
           bestLocation = newLocation
         }
+      }
 
         locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, LocationUpdateIntentService(), null)
         newLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
         // if more recent = more better
-        if(newLocation.time > bestLocation.time){
-          bestLocation = newLocation
+        if (newLocation != null) {
+          if (newLocation.time > bestLocation.time) {
+            bestLocation = newLocation
+          }
         }
         if (bestLocation != null) {
           val latLng = LatLng(bestLocation.latitude, bestLocation.longitude)

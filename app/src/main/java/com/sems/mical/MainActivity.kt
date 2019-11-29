@@ -25,12 +25,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        for(app in AppDatabase.getInstance(this)!!.fenceDao().getId()){
+        for(app in AppDatabase.getInstance(this)!!.micUsedDao().getAll()){
 
-        AppDatabase.getInstance(this)!!.fenceDao().deleteId(app)
+        AppDatabase.getInstance(this)!!.micUsedDao().delete(app)
         }
 
-        createNotificationChannel();
+        createNotificationChannel()
         checkRecordPermission()
 
 
