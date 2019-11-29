@@ -36,7 +36,6 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
             if (message != null && latLng != null) {
                 // 3
                 sendNotification(this, message, latLng)
-                MicMonitoringService.currentGeoFenceTitle = reminder.title
                 AppDatabase.getInstance(this)!!.geoFenceDao().insertFence(GeoFence(reminder.id, reminder.title.toString()))
                 Log.e("Add", AppDatabase.getInstance(this)!!.geoFenceDao().getAll().size.toString())
             }
@@ -47,7 +46,6 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
             if (message != null && latLng != null) {
                 // 3
                 sendNotification(this, message, latLng)
-                MicMonitoringService.currentGeoFenceTitle = null
                 AppDatabase.getInstance(this)!!.geoFenceDao().deleteOnExit(reminder.id)
                 Log.e("Delete", AppDatabase.getInstance(this)!!.geoFenceDao().getAll().size.toString())
             }

@@ -18,6 +18,7 @@ class AcceptAppBroadcastReciever : BroadcastReceiver() {
 
     override fun onReceive(p0: Context?, p1: Intent?) {
         val action = p1?.getStringExtra("action")!!
+        val fenceName = p1?.getStringExtra("fenceName")
         val latitude = p1?.getDoubleExtra("latitude", -1.0)
         val longitude = p1?.getDoubleExtra("longitude", -1.0)
         val radius = p1?.getDoubleExtra("radius", -1.0)

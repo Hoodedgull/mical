@@ -28,10 +28,6 @@ class MicMonitoringService() : Service() {
         return null
     }
 
-    companion object currentGeoFence{
-        var currentGeoFenceTitle: String? = ""
-    }
-
 
 
 
@@ -111,16 +107,14 @@ class MicMonitoringService() : Service() {
 
         var micUsedImpl = MicUsedImpl()
         var response = micUsedImpl.isMicBeingUsed()
-         Log.e("fenceID",currentGeoFenceTitle.toString())
         if (response.result) {
 
             var permissionName = PermissionListing()
             val appName = permissionName.getPermissionApp(this)
-            Log.e("fenceID",currentGeoFenceTitle.toString())
-            
-            if (!currentGeoFenceTitle.isNullOrEmpty()) {
-                if (AppDatabase.getInstance(this)!!.fenceDao().getFenceById(response.appName).isNotEmpty())
-                    return
+
+            if (AppDatabase.getInstance(this)!!.geoFenceDao().getAll().size > 0) {
+                var geoFenceTitle = AppDatabase.getInstance(this)!!.geoFenceDao().getAll().first().title
+                Log.e("FenceTitle", geoFenceTitle)
 
                 var locationUser = getLocation()
 
@@ -139,11 +133,11 @@ class MicMonitoringService() : Service() {
                 val acceptIntent = Intent(this, AddGeofenceActivity::class.java).apply {
                     action = "com.sems.mical.micallow"
                     putExtra("id", notifId)
-                    putExtra("action", applicationContext.getString(R.string.accept_button_in_the_notification_text));
-                    putExtra("appname", response.appName);
-                    putExtra("latitude",lat);
-                    putExtra("longitude", long);
+                    putExtra("fenceName", geoFenceTitle);
+                    putExtra("latitude", locationUser?.latitude);
+                    putExtra("longitude", locationUser?.longitude);
                     putExtra("EXTRA_LAT_LNG", latLong);
+                    putExtra("action", applicationContext.getString(R.string.accept_button_in_the_notification_text));
                 }
 
 
@@ -153,8 +147,8 @@ class MicMonitoringService() : Service() {
                 val declineIntent = Intent(this, AddGeofenceActivity::class.java).apply {
                     action = "com.sems.mical.micallow"
                     putExtra("id", notifId)
+                    putExtra("fenceName", geoFenceTitle)
                     putExtra("action", applicationContext.getString(R.string.notok_button_in_the_notification_text))
-                    putExtra("appname", response.appName)
                     putExtra("latitude", locationUser?.latitude);
                     putExtra("longitude", locationUser?.longitude);
                 }
