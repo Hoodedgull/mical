@@ -23,8 +23,8 @@ class AcceptAppBroadcastReciever : BroadcastReceiver() {
         val radius = p1?.getDoubleExtra("radius", -1.0)
         val id = p1?.getIntExtra("id", -1)
 
-
-        if (action == "accept") {
+        val string = p0?.getString(R.string.accept_button_in_the_notification_text)
+        if (action == string) {
 
             handleRequest(p0, "", latitude, longitude, radius, true)
             Toast.makeText(
@@ -33,12 +33,12 @@ class AcceptAppBroadcastReciever : BroadcastReceiver() {
                 Toast.LENGTH_SHORT
             ).show()
 
-            val reminder = Reminder(getUniqueId().toString(), LatLng(latitude,longitude),200.0,"TEST")
+            val reminder = Reminder(getUniqueId().toString(), LatLng(latitude,longitude),200.0,"TEST",true)
             (p0?.applicationContext as MicalApp).getRepository().add(reminder,null, null);
 
 
             Log.e("BBBB", "ACCEPTED APPPPPPPPPP")
-        } else if (action == "decline") {
+        } else if (action ==  p0?.getString(R.string.notok_button_in_the_notification_text)) {
             handleRequest(p0, "", latitude, longitude, radius, false)
             Toast.makeText(
                 p0?.applicationContext,

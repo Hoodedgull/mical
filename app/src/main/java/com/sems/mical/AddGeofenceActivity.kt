@@ -50,7 +50,7 @@ class AddGeofenceActivity : BaseActivity(), OnMapReadyCallback {
 
   private lateinit var map: GoogleMap
 
-  private var reminder = Reminder(latLng = null, radius = null, message = null)
+  private var reminder = Reminder(latLng = null, radius = null, message = null, allowed = null)
 
   private val radiusBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
     override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -184,6 +184,7 @@ class AddGeofenceActivity : BaseActivity(), OnMapReadyCallback {
       hideKeyboard(this, message)
 
       reminder.message = message.text.toString()
+      reminder.allowed = getString(R.string.accept_button_in_the_notification_text)== intent.extras?.get("action") as String?
 
       if (reminder.message.isNullOrEmpty()) {
         message.error = getString(R.string.error_required)

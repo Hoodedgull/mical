@@ -31,4 +31,8 @@
     <string name="geofence_too_many_pending_intents">
     You have provided too many PendingIntents to the addGeofences() call.
   </string>
+
+    <string name="accept_button_in_the_notification_text">allow</string>
+    <string name="notok_button_in_the_notification_text">deny</string>
+
 </resources>

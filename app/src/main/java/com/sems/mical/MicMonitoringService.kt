@@ -137,7 +137,7 @@ class MicMonitoringService() : Service() {
                 val acceptIntent = Intent(this, AddGeofenceActivity::class.java).apply {
                     action = "com.sems.mical.micallow"
                     putExtra("id", notifId)
-                    putExtra("action", "accept");
+                    putExtra("action", applicationContext.getString(R.string.accept_button_in_the_notification_text));
                     putExtra("appname", response.appName);
                     putExtra("latitude",lat);
                     putExtra("longitude", long);
@@ -151,7 +151,7 @@ class MicMonitoringService() : Service() {
                 val declineIntent = Intent(this, AddGeofenceActivity::class.java).apply {
                     action = "com.sems.mical.micallow"
                     putExtra("id", notifId)
-                    putExtra("action", "decline")
+                    putExtra("action", applicationContext.getString(R.string.notok_button_in_the_notification_text))
                     putExtra("appname", response.appName)
                     putExtra("latitude", locationUser?.latitude);
                     putExtra("longitude", locationUser?.longitude);
@@ -166,10 +166,10 @@ class MicMonitoringService() : Service() {
                     .setContentTitle(appName)
                     .setContentText("Wants to use the mic")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .addAction(R.drawable.ic_stat_onesignal_default, "Accept", acceptPendingIntent)
+                    .addAction(R.drawable.ic_stat_onesignal_default, applicationContext.getString(R.string.accept_button_in_the_notification_text), acceptPendingIntent)
                     .addAction(
                         R.drawable.ic_stat_onesignal_default,
-                        "Decline",
+                        applicationContext.getString(R.string.notok_button_in_the_notification_text),
                         declinePendingIntent
                     )
                 //.setAutoCancel(true)
