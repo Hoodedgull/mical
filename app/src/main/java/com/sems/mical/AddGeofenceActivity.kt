@@ -34,6 +34,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -50,7 +52,7 @@ class AddGeofenceActivity : BaseActivity(), OnMapReadyCallback {
 
   private lateinit var map: GoogleMap
 
-  private var reminder = Reminder(latLng = null, radius = null, message = null)
+  private var reminder = Reminder(latLng = null, radius = null, message = null, title = null)
 
   private val radiusBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
     override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -136,7 +138,7 @@ class AddGeofenceActivity : BaseActivity(), OnMapReadyCallback {
     instructionTitle.text = getString(R.string.instruction_where_description)
     next.setOnClickListener {
       reminder.latLng = map.cameraPosition.target
-      showConfigureRadiusStep()
+      showConfigureTitleStep()
     }
 
     showReminderUpdate()
@@ -163,12 +165,40 @@ class AddGeofenceActivity : BaseActivity(), OnMapReadyCallback {
 
   private fun getRadius(progress: Int) = 100 + (2 * progress.toDouble() + 1) * 100
 
+  private fun showConfigureTitleStep() {
+    marker.visibility = View.GONE
+    instructionTitle.visibility = View.VISIBLE
+    instructionSubtitle.visibility = View.GONE
+    radiusBar.visibility = View.GONE
+    radiusDescription.visibility = View.GONE
+    message.visibility = View.VISIBLE
+    instructionTitle.text = "Enter the Title"
+    next.setOnClickListener {
+      hideKeyboard(this, message)
+
+      reminder.title = message.text.toString()
+
+      if (reminder.title.isNullOrEmpty()) {
+        message.error = getString(R.string.error_required)
+      } else {
+        addReminder(reminder)
+      }
+      Log.e("Title", reminder.title)
+      showConfigureRadiusStep()
+    }
+    message.requestFocusWithKeyboard()
+
+    showReminderUpdate()
+  }
+
+
   private fun showConfigureMessageStep() {
     marker.visibility = View.GONE
     instructionTitle.visibility = View.VISIBLE
     instructionSubtitle.visibility = View.GONE
     radiusBar.visibility = View.GONE
     radiusDescription.visibility = View.GONE
+    message.setText("")
     message.visibility = View.VISIBLE
     instructionTitle.text = getString(R.string.instruction_message_description)
     next.setOnClickListener {
@@ -181,6 +211,7 @@ class AddGeofenceActivity : BaseActivity(), OnMapReadyCallback {
       } else {
         addReminder(reminder)
       }
+      Log.e("Message", reminder.message)
     }
     message.requestFocusWithKeyboard()
 

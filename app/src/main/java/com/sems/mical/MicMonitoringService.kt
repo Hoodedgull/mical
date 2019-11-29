@@ -1,11 +1,7 @@
 package com.sems.mical
 
-import android.annotation.SuppressLint
-import android.app.IntentService
-import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.location.Criteria
 import android.location.Location
@@ -21,7 +17,6 @@ import com.sems.mical.data.AppDatabase
 import com.sems.mical.data.entities.MicrophoneIsBeingUsed
 import sensorapi.micapi.MicUsedImpl
 import java.time.LocalDateTime
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.sems.mical.data.LocationUpdateIntentService
 import sensorapi.micapi.PermissionListing
@@ -34,7 +29,7 @@ class MicMonitoringService() : Service() {
     }
 
     companion object currentGeoFence{
-        var fenceID = ""
+        var currentGeoFenceTitle: String? = ""
     }
 
 
@@ -118,13 +113,14 @@ class MicMonitoringService() : Service() {
 
         var micUsedImpl = MicUsedImpl()
         var response = micUsedImpl.isMicBeingUsed()
-         Log.e("fenceID",fenceID)
+         Log.e("fenceID",currentGeoFenceTitle.toString())
         if (response.result) {
 
             var permissionName = PermissionListing()
             val appName = permissionName.getPermissionApp(this)
-            Log.e("fenceID",fenceID)
-            //if (fenceID == "null") {
+            Log.e("fenceID",currentGeoFenceTitle.toString())
+            
+            if (!currentGeoFenceTitle.isNullOrEmpty()) {
                 if (AppDatabase.getInstance(this)!!.fenceDao().getFenceById(response.appName).isNotEmpty())
                     return
 
@@ -179,13 +175,6 @@ class MicMonitoringService() : Service() {
                     )
                 //.setAutoCancel(true)
 
-
-                with(NotificationManagerCompat.from(this)) {
-                    // notificationId is a unique int for each notification that you must define
-                    notify(response.appName.hashCode(), builder.build())
-
-                }
-
                 AppDatabase.getInstance(this)!!.micUsedDao().insert(
                     MicrophoneIsBeingUsed(
                         response.appName,
@@ -205,4 +194,5 @@ class MicMonitoringService() : Service() {
         //}
 
     }
+         }
 }

@@ -33,7 +33,7 @@ class AcceptAppBroadcastReciever : BroadcastReceiver() {
                 Toast.LENGTH_SHORT
             ).show()
 
-            val reminder = Reminder(getUniqueId().toString(), LatLng(latitude,longitude),200.0,"TEST")
+            val reminder = Reminder(getUniqueId().toString(), LatLng(latitude,longitude),200.0,"TEST", "Test Title")
             (p0?.applicationContext as MicalApp).getRepository().add(reminder,null, null);
 
 

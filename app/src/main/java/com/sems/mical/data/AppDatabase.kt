@@ -6,12 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 //import com.sems.mical.data.daos.AppDao
 import com.sems.mical.data.daos.FenceDao
+import com.sems.mical.data.daos.GeoFenceDao
 import com.sems.mical.data.daos.MicUsedDao
 import com.sems.mical.data.entities.App
 import com.sems.mical.data.entities.Fence
+import com.sems.mical.data.entities.GeoFence
 import com.sems.mical.data.entities.MicrophoneIsBeingUsed
 
-@Database(entities = [Fence::class, MicrophoneIsBeingUsed::class],exportSchema = false,version = 4)
+@Database(entities = [Fence::class, MicrophoneIsBeingUsed::class, GeoFence::class ],exportSchema = false,version = 5)
 abstract class AppDatabase : RoomDatabase() {
     companion object {
     val DB_NAME = "App_Db"
@@ -32,5 +34,6 @@ abstract class AppDatabase : RoomDatabase() {
     //abstract fun appDao() : AppDao ;
     abstract fun micUsedDao() : MicUsedDao ;
     abstract fun fenceDao(): FenceDao
+    abstract fun geoFenceDao(): GeoFenceDao
 }
 

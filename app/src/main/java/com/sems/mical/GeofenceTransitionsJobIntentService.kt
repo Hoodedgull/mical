@@ -4,9 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.JobIntentService
-import com.github.mikephil.charting.charts.Chart.LOG_TAG
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
+import com.sems.mical.data.AppDatabase
+import com.sems.mical.data.entities.GeoFence
 
 class GeofenceTransitionsJobIntentService : JobIntentService() {
 
@@ -25,8 +26,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
     }
 
     private fun handleEvent(event: GeofencingEvent) {
-        Log.e("NNNN", "WE CANnot send notfi, but we are handlign event!")
-
+        Log.e("NNNN", "hello!")
         // 1
         if (event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
             // 2
@@ -35,9 +35,10 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
             val latLng = reminder?.latLng
             if (message != null && latLng != null) {
                 // 3
-               sendNotification(this, message, latLng)
-                MicMonitoringService.fenceID = reminder.id
-               Log.e("NNNN", "WE CANnot send enter notfi, but we are handlign event!")
+                sendNotification(this, message, latLng)
+                MicMonitoringService.currentGeoFenceTitle = reminder.title
+                AppDatabase.getInstance(this)!!.geoFenceDao().insertFence(GeoFence(reminder.id, reminder.title.toString()))
+                Log.e("Add", AppDatabase.getInstance(this)!!.geoFenceDao().getAll().size.toString())
             }
         } else if(event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){
             val reminder = getFirstReminder(event.triggeringGeofences)
@@ -46,8 +47,9 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
             if (message != null && latLng != null) {
                 // 3
                 sendNotification(this, message, latLng)
-                MicMonitoringService.fenceID = "none"
-                Log.e("NNNN", "WE CANnot send exit notfi, but we are handlign event!")
+                MicMonitoringService.currentGeoFenceTitle = null
+                AppDatabase.getInstance(this)!!.geoFenceDao().deleteOnExit(reminder.id)
+                Log.e("Delete", AppDatabase.getInstance(this)!!.geoFenceDao().getAll().size.toString())
             }
         }else {
             val reminder = getFirstReminder(event.triggeringGeofences)

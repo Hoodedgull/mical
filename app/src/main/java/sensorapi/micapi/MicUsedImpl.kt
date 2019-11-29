@@ -6,17 +6,20 @@ import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import androidx.core.app.ActivityCompat
+import kotlin.math.nextUp
 import kotlin.random.Random
 
 class MicUsedImpl : MicAlerterInterface {
     override fun isMicBeingUsed(): IsMicInUseResult {
 
+        return IsMicInUseResult(true, "Google")
 
-      if(!validateMicAvailability()){
+      /**if(!validateMicAvailability()){
           return IsMicInUseResult(true,"noapp")
       }else {
           return IsMicInUseResult(false,"")
       }
+      */
     }
 
 
