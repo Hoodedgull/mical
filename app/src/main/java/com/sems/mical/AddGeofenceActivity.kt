@@ -52,7 +52,7 @@ class AddGeofenceActivity : BaseActivity(), OnMapReadyCallback {
 
   private lateinit var map: GoogleMap
 
-  private var reminder = Reminder(latLng = null, radius = null, message = null, title = null)
+  private var reminder = Reminder(latLng = null, radius = null, message = null, title = null, allowed = null)
 
   private val radiusBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
     override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -117,14 +117,23 @@ class AddGeofenceActivity : BaseActivity(), OnMapReadyCallback {
   }
 
   private fun centerCamera() {
-    var latLng = intent.extras?.get(EXTRA_LAT_LNG) as LatLng?
+
+    var latLng =intent.extras?.get(EXTRA_LAT_LNG) as LatLng?
+      if(latLng== null){
+
+    val lat = intent.extras?.get("latitude") as Double?
+    val long = intent.extras?.get("longitude") as Double?
+    if(lat != null && long != null){
+      latLng =  LatLng(lat,long)
+    }else {
+      latLng = LatLng(0.0,0.0)
+    }
+      }
     var zoom = intent.extras?.get(EXTRA_ZOOM) as Float?
     if(zoom == null){
-      zoom = 0.0f
+      zoom = 13.0f
     }
-    if(latLng == null){
-      latLng = LatLng(0.0,0.0);
-    }
+
     map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom))
   }
 
@@ -135,7 +144,7 @@ class AddGeofenceActivity : BaseActivity(), OnMapReadyCallback {
     radiusBar.visibility = View.GONE
     radiusDescription.visibility = View.GONE
     message.visibility = View.GONE
-    instructionTitle.text = getString(R.string.instruction_where_description)
+    instructionTitle.text = "Where do you want to ${intent.extras?.get("action") as String?} mic use?"
     next.setOnClickListener {
       reminder.latLng = map.cameraPosition.target
       showConfigureTitleStep()
@@ -205,6 +214,7 @@ class AddGeofenceActivity : BaseActivity(), OnMapReadyCallback {
       hideKeyboard(this, message)
 
       reminder.message = message.text.toString()
+      reminder.allowed = getString(R.string.accept_button_in_the_notification_text)== intent.extras?.get("action") as String?
 
       if (reminder.message.isNullOrEmpty()) {
         message.error = getString(R.string.error_required)

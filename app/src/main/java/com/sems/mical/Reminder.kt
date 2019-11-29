@@ -37,4 +37,5 @@ data class Reminder(val id: String = UUID.randomUUID().toString(),
                     var latLng: LatLng?,
                     var radius: Double?,
                     var message: String?,
-                    var title: String?)
+                    var title: String?,
+                    var allowed: Boolean?)
