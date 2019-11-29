@@ -27,7 +27,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         for(app in AppDatabase.getInstance(this)!!.micUsedDao().getAll()){
 
-        AppDatabase.getInstance(this)!!.micUsedDao().delete(app)
+            AppDatabase.getInstance(this)!!.micUsedDao().delete(app)
+        }
+
+        for(app in AppDatabase.getInstance(this)!!.geoFenceDao().getAll()){
+
+            AppDatabase.getInstance(this)!!.geoFenceDao().deleteId(app)
         }
 
         createNotificationChannel()
