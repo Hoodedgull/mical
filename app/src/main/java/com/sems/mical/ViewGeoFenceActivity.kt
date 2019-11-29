@@ -49,6 +49,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.material.snackbar.Snackbar
+import com.sems.mical.data.LocationUpdateIntentService
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_view_geofence.*
 
@@ -137,9 +138,23 @@ class ViewGeoFenceActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMar
 
       currentLocation.setOnClickListener {
         val bestProvider = locationManager.getBestProvider(Criteria(), false)
-        val location = locationManager.getLastKnownLocation(bestProvider)
-        if (location != null) {
-          val latLng = LatLng(location.latitude, location.longitude)
+        var bestLocation = locationManager.getLastKnownLocation(bestProvider)
+        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
+          LocationUpdateIntentService(),null)
+        var newLocation= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        if(newLocation.time > bestLocation.time){
+          bestLocation = newLocation
+        }
+
+        locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, LocationUpdateIntentService(), null)
+        newLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+
+        // if more recent = more better
+        if(newLocation.time > bestLocation.time){
+          bestLocation = newLocation
+        }
+        if (bestLocation != null) {
+          val latLng = LatLng(bestLocation.latitude, bestLocation.longitude)
           map?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
         }
       }

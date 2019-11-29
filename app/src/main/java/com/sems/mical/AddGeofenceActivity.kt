@@ -115,14 +115,23 @@ class AddGeofenceActivity : BaseActivity(), OnMapReadyCallback {
   }
 
   private fun centerCamera() {
-    var latLng = intent.extras?.get(EXTRA_LAT_LNG) as LatLng?
+
+    var latLng =intent.extras?.get(EXTRA_LAT_LNG) as LatLng?
+      if(latLng== null){
+
+    val lat = intent.extras?.get("latitude") as Double?
+    val long = intent.extras?.get("longitude") as Double?
+    if(lat != null && long != null){
+      latLng =  LatLng(lat,long)
+    }else {
+      latLng = LatLng(0.0,0.0)
+    }
+      }
     var zoom = intent.extras?.get(EXTRA_ZOOM) as Float?
     if(zoom == null){
-      zoom = 0.0f
+      zoom = 13.0f
     }
-    if(latLng == null){
-      latLng = LatLng(0.0,0.0);
-    }
+
     map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom))
   }
 
@@ -133,7 +142,7 @@ class AddGeofenceActivity : BaseActivity(), OnMapReadyCallback {
     radiusBar.visibility = View.GONE
     radiusDescription.visibility = View.GONE
     message.visibility = View.GONE
-    instructionTitle.text = getString(R.string.instruction_where_description)
+    instructionTitle.text = "Where do you want to ${intent.extras?.get("action") as String?} mic use?"
     next.setOnClickListener {
       reminder.latLng = map.cameraPosition.target
       showConfigureRadiusStep()
