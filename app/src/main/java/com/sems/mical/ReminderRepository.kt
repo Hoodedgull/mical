@@ -41,6 +41,7 @@ import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
+import com.sems.mical.data.AppDatabase
 
 class ReminderRepository(private val context: Context) {
 
@@ -129,6 +130,7 @@ class ReminderRepository(private val context: Context) {
         .addOnSuccessListener {
           saveAll(getAll() - reminder)
           success()
+            AppDatabase.getInstance(context)!!.geoFenceDao().deleteOnExit(reminder.id)
         }
         .addOnFailureListener {
           failure(GeofenceErrorMessages.getErrorString(context, it))
