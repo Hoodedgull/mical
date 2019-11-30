@@ -12,14 +12,14 @@ import kotlin.random.Random
 class MicUsedImpl : MicAlerterInterface {
     override fun isMicBeingUsed(): IsMicInUseResult {
 
-        return IsMicInUseResult(true, "Google")
+      //  return IsMicInUseResult(validateMicAvailability(), "Google")
 
-      /**if(!validateMicAvailability()){
+      if(!validateMicAvailability()){
           return IsMicInUseResult(true,"noapp")
       }else {
           return IsMicInUseResult(false,"")
       }
-      */
+
     }
 
 
