@@ -131,7 +131,9 @@ class ReminderRepository(private val context: Context) {
         .addOnSuccessListener {
           saveAll(getAll() - reminder)
           success()
+            Log.e("DB Length", AppDatabase.getInstance(context)!!.geoFenceDao().getAll().size.toString())
             AppDatabase.getInstance(context)!!.geoFenceDao().deleteOnExit(reminder.id)
+            Log.e("DB Length", AppDatabase.getInstance(context)!!.geoFenceDao().getAll().size.toString())
         }
         .addOnFailureListener {
           failure(GeofenceErrorMessages.getErrorString(context, it))
