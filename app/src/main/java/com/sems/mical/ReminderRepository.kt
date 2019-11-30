@@ -125,6 +125,7 @@ class ReminderRepository(private val context: Context) {
   fun remove(reminder: Reminder,
              success: () -> Unit,
              failure: (error: String) -> Unit) {
+
     geofencingClient
         .removeGeofences(listOf(reminder.id))
         .addOnSuccessListener {

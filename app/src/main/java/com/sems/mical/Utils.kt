@@ -58,12 +58,22 @@ fun showReminderInMap(context: Context,
         marker.tag = reminder.id
         if (reminder.radius != null) {
             val radius = reminder.radius as Double
+            if(reminder.allowed!!){
+
             map.addCircle(
                 CircleOptions()
                     .center(reminder.latLng)
                     .radius(radius)
                     .strokeColor(ContextCompat.getColor(context, R.color.colorAccent))
                     .fillColor(ContextCompat.getColor(context, R.color.colorReminderFill)))
+            }else{
+                map.addCircle(
+                    CircleOptions()
+                        .center(reminder.latLng)
+                        .radius(radius)
+                        .strokeColor(ContextCompat.getColor(context, R.color.colorAccent))
+                        .fillColor(ContextCompat.getColor(context, R.color.colorDenyReminderFill)))
+            }
         }
     }
 }

@@ -30,10 +30,6 @@ class MainActivity : AppCompatActivity() {
     //    AppDatabase.getInstance(this)!!.micUsedDao().delete(app)
   //      }
 
-        for(app in AppDatabase.getInstance(this)!!.geoFenceDao().getAll()){
-
-            AppDatabase.getInstance(this)!!.geoFenceDao().deleteId(app)
-        }
 
         createNotificationChannel()
         checkRecordPermission()
