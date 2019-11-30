@@ -186,6 +186,8 @@ class AddGeofenceActivity : BaseActivity(), OnMapReadyCallback {
       hideKeyboard(this, message)
 
       reminder.title = message.text.toString()
+      reminder.allowed = getString(R.string.accept_button_in_the_notification_text)== intent.extras?.get("action") as String?
+
 
       if (reminder.title.isNullOrEmpty()) {
         message.error = getString(R.string.error_required)
@@ -214,7 +216,6 @@ class AddGeofenceActivity : BaseActivity(), OnMapReadyCallback {
       hideKeyboard(this, message)
 
       reminder.message = message.text.toString()
-      reminder.allowed = getString(R.string.accept_button_in_the_notification_text)== intent.extras?.get("action") as String?
 
       if (reminder.message.isNullOrEmpty()) {
         message.error = getString(R.string.error_required)

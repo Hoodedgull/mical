@@ -33,24 +33,36 @@
         android:id="@+id/viewUsage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="286dp"
+        android:layout_marginBottom="32dp"
         android:onClick="viewMicUsage"
         android:text="View microphone usage"
-        app:layout_constraintBottom_toTopOf="@+id/viewGeos"
+        app:layout_constraintBottom_toTopOf="@+id/viewUsage2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button" />
 
     <Button
+        android:id="@+id/viewUsage2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="clearStats"
+        android:text="Clear statistics"
+        app:layout_constraintBottom_toTopOf="@+id/viewGeos"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewUsage" />
+
+    <Button
         android:id="@+id/viewGeos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:onClick="viewGeoFences"
         android:text="view geo fences"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewUsage" />
+        app:layout_constraintTop_toBottomOf="@+id/viewUsage2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

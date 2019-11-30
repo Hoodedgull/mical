@@ -25,10 +25,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        for(app in AppDatabase.getInstance(this)!!.micUsedDao().getAll()){
 
-    //    AppDatabase.getInstance(this)!!.micUsedDao().delete(app)
-  //      }
 
 
         createNotificationChannel()
@@ -66,6 +63,20 @@ class MainActivity : AppCompatActivity() {
                 this,arrayOf( Manifest.permission.RECORD_AUDIO ),
                 123
             );
+        }
+    }
+
+    fun clearStats(view:View){
+        for(app in AppDatabase.getInstance(this)!!.micUsedDao().getAll()){
+
+            AppDatabase.getInstance(this)!!.micUsedDao().delete(app)
+        }
+    }
+
+    fun clearGeofenceStatus(view:View){
+        for(app in AppDatabase.getInstance(this)!!.geoFenceDao().getAll()){
+
+            AppDatabase.getInstance(this)!!.geoFenceDao().deleteId(app)
         }
     }
 
