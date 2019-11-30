@@ -6,8 +6,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 @Entity
 class MicrophoneIsBeingUsed (
-        var appFullName: String = "",
-        var timeUserGaveFeedback: String = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME) ){
-
+        var fenceName: String = ""){
+        var count: Int = 0
         @PrimaryKey(autoGenerate = true) var id : Int = 0
 }

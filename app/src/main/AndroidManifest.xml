@@ -3,6 +3,12 @@
     package="com.sems.mical">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
 
 
 
@@ -12,7 +18,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".MicalApp">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAgCopBEwp07Sr6ZrnVAP8vee-Qrr0JiXQ"/>
+
         <activity android:name=".ViewUseActivity"
             android:parentActivityName=".MainActivity"></activity>
         <activity android:name=".MainActivity">
@@ -22,13 +33,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AddGeofenceActivity"
+            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".ViewGeoFenceActivity"
+            android:parentActivityName=".MainActivity"/>
 
         <service android:name=".MicMonitoringService" />
         <receiver android:name=".AcceptAppBroadcastReciever">
             <intent-filter>
                 <action android:name="com.sems.mical.micallow"></action>
+                <action android:name="com.sems.mical.micdeny"></action>
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".GeofenceBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".GeofenceTransitionsJobIntentService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
     </application>
 
 </manifest>

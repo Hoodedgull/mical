@@ -8,8 +8,11 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Entity
-class App(
-    @PrimaryKey(autoGenerate = false) var fullName: String = "",
-    var displayName: String = "",
+class Fence(
+    @PrimaryKey(autoGenerate = false)
+    var id: String = "",
+    var lat: Double = 0.0,
+    var long: Double = 0.0,
+    var radius: Double = 0.0,
     var isAcceptedByUser: Boolean = false,
     var timeUserGaveFeedback: String = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME) )
