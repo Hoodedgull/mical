@@ -51,9 +51,10 @@ class ViewUseActivity : AppCompatActivity() {
 
 
         val yLeft = skillRatingChart.axisLeft
+        val usageResults = AppDatabase.getInstance(this)?.micUsedDao()?.getAll()
 
 //Set the minimum and maximum bar lengths as per the values that they represent
-        yLeft.axisMaximum = 100f
+        yLeft.axisMaximum = usageResults?.maxBy{ res -> res.count}?.count?.toFloat() ?: 100f
         yLeft.axisMinimum = 0f
         yLeft.isEnabled = false
 
@@ -66,7 +67,6 @@ class ViewUseActivity : AppCompatActivity() {
         yRight.isEnabled = false
 
 
-        val usageResults = AppDatabase.getInstance(this)?.micUsedDao()?.getAll()
         val distinctAppNames = usageResults?.map { r -> r.fenceName }?.distinct()
 
 
@@ -102,7 +102,7 @@ class ViewUseActivity : AppCompatActivity() {
         val entries = ArrayList<BarEntry>()
         if (usageResults != null) {
             for (i in (distinctFenceNames.indices)){
-                entries.add(BarEntry(i.toFloat(), usageResults.filter({e-> e.fenceName.equals(distinctFenceNames[i])}).count().toFloat()))
+                entries.add(BarEntry(i.toFloat(), usageResults.filter({e-> e.fenceName.equals(distinctFenceNames[i])}).first().count.toFloat()))
             }
         }
 

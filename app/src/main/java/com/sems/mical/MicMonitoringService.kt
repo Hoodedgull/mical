@@ -123,7 +123,7 @@ class MicMonitoringService() : Service() {
                     return
 
                 // Inside no-mic zone.
-                if (!AppDatabase.getInstance(this)!!.micUsedDao().getAll().isEmpty()){
+                if (!AppDatabase.getInstance(this)!!.micUsedDao().getAllByFenceName(geoFenceTitle.toString()).isEmpty()){
                     val micCounterObject = AppDatabase.getInstance(this)!!.micUsedDao().getAllByFenceName(geoFenceTitle.toString()).first()
 
                     if (micCounterObject.count != null){
