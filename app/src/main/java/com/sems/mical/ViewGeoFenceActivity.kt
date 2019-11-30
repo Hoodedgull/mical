@@ -145,7 +145,7 @@ class ViewGeoFenceActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMar
         )
         var newLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         if (newLocation != null) {
-        if (newLocation.time > bestLocation.time) {
+        if (bestLocation == null || newLocation.time > bestLocation.time) {
           bestLocation = newLocation
         }
       }
