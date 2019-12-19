@@ -24,28 +24,26 @@ class MicUsedImpl : MicAlerterInterface {
 
 
 
-    fun validateMicAvailability() : Boolean{
-        var available = true;
+    private fun validateMicAvailability() : Boolean{
+        var available = true
         val recorder = AudioRecord(
             MediaRecorder.AudioSource.MIC, 44100,
         AudioFormat.CHANNEL_IN_MONO,
-        AudioFormat.ENCODING_DEFAULT, 44100);
+        AudioFormat.ENCODING_DEFAULT, 44100)
         try{
             if(recorder.recordingState != AudioRecord.RECORDSTATE_STOPPED ){
-                available = false;
+                available = false
 
             }
             recorder.startRecording();
             if(recorder.recordingState != AudioRecord.RECORDSTATE_RECORDING){
                 recorder.stop();
-                available = false;
-
+                available = false
             }
-            recorder.stop();
+            recorder.stop()
         } finally{
-            recorder.release();
+            recorder.release()
         }
-
-        return available;
+        return available
     }
 }

@@ -26,7 +26,6 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
     }
 
     private fun handleEvent(event: GeofencingEvent) {
-        Log.e("NNNN", "hello!")
         // 1
         if (event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
             // 2
@@ -36,8 +35,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
             if (message != null && latLng != null) {
                 // 3
                 sendNotification(this, message, latLng)
-                AppDatabase.getInstance(this)!!.geoFenceDao().insertFence(GeoFence(reminder.id, reminder.title, reminder.allowed))
-                Log.e("Add", AppDatabase.getInstance(this)!!.geoFenceDao().getAll().size.toString())
+                newFence(reminder)
             }
         } else if(event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){
             val reminder = getFirstReminder(event.triggeringGeofences)
@@ -46,8 +44,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
             if (message != null && latLng != null) {
                 // 3
                 sendNotification(this, message, latLng)
-                AppDatabase.getInstance(this)!!.geoFenceDao().deleteOnExit(reminder.id)
-                Log.e("Delete", AppDatabase.getInstance(this)!!.geoFenceDao().getAll().size.toString())
+                removeFence(reminder)
             }
         }else {
             val reminder = getFirstReminder(event.triggeringGeofences)
@@ -56,9 +53,17 @@ class GeofenceTransitionsJobIntentService : JobIntentService() {
             if (message != null && latLng != null) {
                 // 3
                 sendNotification(this, message, latLng)
-                Log.e("NNNN", "WE CANnot send notfi, but we are handlign event!")
             }
         }
+    }
+
+    private fun removeFence(reminder: Reminder) {
+        AppDatabase.getInstance(this)!!.geoFenceDao().deleteOnExit(reminder.id)
+    }
+
+    private fun newFence(reminder: Reminder) {
+        AppDatabase.getInstance(this)!!.geoFenceDao()
+            .insertFence(GeoFence(reminder.id, reminder.title, reminder.allowed))
     }
 
     private fun getFirstReminder(triggeringGeofences: List<Geofence>): Reminder? {

@@ -5,21 +5,17 @@ import android.app.Service
 import android.content.Intent
 import android.location.Location
 import android.location.LocationManager
-import android.net.Uri
 import android.os.IBinder
 import android.os.Looper
-import android.provider.Settings
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.sems.mical.data.AppDatabase
 import com.sems.mical.data.entities.MicrophoneIsBeingUsed
 import sensorapi.micapi.MicUsedImpl
-import java.time.LocalDateTime
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.model.LatLng
 import com.sems.mical.data.LocationUpdateIntentService
-import sensorapi.micapi.PermissionListing
 import java.util.*
 
 
@@ -123,8 +119,8 @@ class MicMonitoringService() : Service() {
                     return
 
                 // Inside no-mic zone.
-                if (!AppDatabase.getInstance(this)!!.micUsedDao().getAllByFenceName(geoFenceTitle.toString()).isEmpty()){
-                    val micCounterObject = AppDatabase.getInstance(this)!!.micUsedDao().getAllByFenceName(geoFenceTitle.toString()).first()
+                if (!currentFenceHasNoStatistics(geoFenceTitle)){
+                    val micCounterObject = getCurrentFenceStatistic(geoFenceTitle)
 
                     if (micCounterObject.count != null){
                         micCounterObject.count++
@@ -132,7 +128,7 @@ class MicMonitoringService() : Service() {
                         micCounterObject.count = 1
                     }
 
-                    AppDatabase.getInstance(this)!!.micUsedDao().update(micCounterObject)
+                    updateFenceStatistic(micCounterObject)
                 } else {
                     var obj = MicrophoneIsBeingUsed(geoFenceTitle.toString())
                     obj.count = 1
@@ -216,6 +212,16 @@ class MicMonitoringService() : Service() {
 
         }
     }
+
+    private fun updateFenceStatistic(micCounterObject: MicrophoneIsBeingUsed) {
+        AppDatabase.getInstance(this)!!.micUsedDao().update(micCounterObject)
+    }
+
+    private fun getCurrentFenceStatistic(geoFenceTitle: String?) =
+        AppDatabase.getInstance(this)!!.micUsedDao().getAllByFenceName(geoFenceTitle.toString()).first()
+
+    private fun currentFenceHasNoStatistics(geoFenceTitle: String?) =
+        AppDatabase.getInstance(this)!!.micUsedDao().getAllByFenceName(geoFenceTitle.toString()).isEmpty()
 
     private fun getGeoFence() =
         AppDatabase.getInstance(this)!!.geoFenceDao().getAll().first()
